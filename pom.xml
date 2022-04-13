@@ -10,7 +10,7 @@
 
   <name>orbix_gpu_benchmark</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://github.com/radumicea/Orbix-Gpu-Benchmark</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,6 +73,14 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+        <plugin>
+            <groupId>com.orbix</groupId>
+            <artifactId>orbix_gpu_benchmark</artifactId>
+            <version>1</version>
+            <configuration>
+                <mainClass>com.orbix.App</mainClass>
+            </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
