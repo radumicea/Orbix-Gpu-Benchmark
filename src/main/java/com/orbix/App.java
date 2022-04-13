@@ -33,10 +33,12 @@ public class App
                 int i = getGlobalId();
                 int row = i / c2;
                 int col = i % c2;
+                // Is this ran by the GPU or the CPU??
                 for (int j = 0; j < c1_r2; j++)
                 {
                     res[i] += a[row * c1_r2 + j] * b[j * c2 + col];
                 }
+                //
             }
         };
 
