@@ -74,7 +74,10 @@ public class App
         }
 
         long start = System.nanoTime();
-        testCPU(a, b, new float[a.length], r1, c1_r2, c2);
+        for (int i = 0; i < 5; i++)
+        {
+            testCPU(a, b, new float[a.length], r1, c1_r2, c2);
+        }
         long stop = System.nanoTime();
         System.out.println("CPU warmup: " + (stop - start) / 1_000_000_000.0);
     }
@@ -91,15 +94,18 @@ public class App
         }
 
         long start = System.nanoTime();
-        testGPU(a, b, new float[a.length], r1, c1_r2, c2);
+        for (int i = 0; i < 5; i++)
+        {
+            testGPU(a, b, new float[a.length], r1, c1_r2, c2);
+        }
         long stop = System.nanoTime();
         System.out.println("GPU warmup: " + (stop - start) / 1_000_000_000.0);
     }
 
     public static void main( String[] args )
     {
-        warmupCPU(1_500, 1_500, 1_500);        
-        warmupGPU(5_500, 5_500, 5_500);
+        warmupCPU(1_250, 1_250, 1_250);        
+        warmupGPU(4_500, 4_500, 4_500);
 
         final float a[] = new float[ROWS * COLS];
         final float b[] = new float[ROWS * COLS];
