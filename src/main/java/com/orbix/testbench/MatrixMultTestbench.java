@@ -8,6 +8,9 @@ import com.orbix.logging.TimeUnit;
 import com.orbix.timing.ITimer;
 import com.orbix.timing.Timer;
 
+/**
+ * Tests parallelization capabilities of GPU through a highly parallelizable task, namely matrix multiplication.
+ */
 public class MatrixMultTestbench
 {
     public static void main(String[] args)
