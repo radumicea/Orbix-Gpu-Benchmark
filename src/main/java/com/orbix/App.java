@@ -1,14 +1,18 @@
 package com.orbix;
 
+import java.util.Random;
+
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
 public class App 
 {
+    static final Random RANDOM = new Random();
+
     static final int ROWS = 3_000;
     static final int COLS = 3_000;
 
-    static void testCPU(final float a[], final float b[], final float res[], final int r1, final int c1_r2, final int c2)
+    static void testCPU(final byte a[], final byte b[], final byte res[], final int r1, final int c1_r2, final int c2)
     {
         int n = r1 * c2;
 
@@ -23,7 +27,7 @@ public class App
         }
     }
 
-    static void testGPU(final float a[], final float b[], final float res[], final int r1, final int c1_r2, final int c2)
+    static void testGPU(final byte a[], final byte b[], final byte res[], final int r1, final int c1_r2, final int c2)
     {
         Kernel kernel = new Kernel()
         {
@@ -46,7 +50,7 @@ public class App
         kernel.execute(range);
     }
 
-    static void printMatrix(final float a[], int r, int c)
+    static void printMatrix(final byte a[], int r, int c)
     {
         int n = r * c;
 
@@ -66,19 +70,19 @@ public class App
 
     static void warmupCPU(final int r1, final int c1_r2, final int c2)
     {
-        final float a[] = new float[r1 * c1_r2];
-        final float b[] = new float[c1_r2 * c2];
+        final byte a[] = new byte[r1 * c1_r2];
+        final byte b[] = new byte[c1_r2 * c2];
 
         for (int i = 0; i < a.length; i++)
         {
-            a[i] = (float)Math.random();
+            a[i] = (byte)RANDOM.nextInt();
             b[i] = a[i];
         }
 
         long start = System.nanoTime();
         for (int i = 0; i < 5; i++)
         {
-            testCPU(a, b, new float[a.length], r1, c1_r2, c2);
+            testCPU(a, b, new byte[a.length], r1, c1_r2, c2);
         }
         long stop = System.nanoTime();
         System.out.println("CPU warmup: " + (stop - start) / 1_000_000_000.0);
@@ -86,19 +90,19 @@ public class App
 
     static void warmupGPU(final int r1, final int c1_r2, final int c2)
     {
-        final float a[] = new float[r1 * c1_r2];
-        final float b[] = new float[c1_r2 * c2];
+        final byte a[] = new byte[r1 * c1_r2];
+        final byte b[] = new byte[c1_r2 * c2];
 
         for (int i = 0; i < a.length; i++)
         {
-            a[i] = (float)Math.random();
+            a[i] = (byte)RANDOM.nextInt();
             b[i] = a[i];
         }
 
         long start = System.nanoTime();
         for (int i = 0; i < 5; i++)
         {
-            testGPU(a, b, new float[a.length], r1, c1_r2, c2);
+            testGPU(a, b, new byte[a.length], r1, c1_r2, c2);
         }
         long stop = System.nanoTime();
         System.out.println("GPU warmup: " + (stop - start) / 1_000_000_000.0);
@@ -106,17 +110,17 @@ public class App
 
     public static void main( String[] args )
     {
-        warmupCPU(1_250, 1_250, 1_250);        
-        warmupGPU(4_500, 4_500, 4_500);
+        warmupCPU(100, 100, 100);        
+        warmupGPU(100, 100, 100);
 
-        final float a[] = new float[ROWS * COLS];
-        final float b[] = new float[ROWS * COLS];
-        final float res1[] = new float[ROWS * COLS];
-        final float res2[] = new float[ROWS * COLS];
+        final byte a[] = new byte[ROWS * COLS];
+        final byte b[] = new byte[ROWS * COLS];
+        final byte res1[] = new byte[ROWS * COLS];
+        final byte res2[] = new byte[ROWS * COLS];
 
         for (int i = 0; i < a.length; i++)
         {
-            a[i] = (float)Math.random();
+            a[i] = (byte)RANDOM.nextInt();
             b[i] = a[i];
         }
 
