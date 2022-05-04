@@ -3,7 +3,7 @@ package com.orbix;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 
-public class HelloController {
+public class Controller {
     @FXML
     private ChoiceBox gpu_label;
     @FXML
