@@ -13,6 +13,4 @@ public class Controller {
         gpu_label.getItems().addAll("Integrated", "Dedicated");
         method_label.getItems().addAll("Standard", "Fractals", "Mandals");
     }
-
-
 }
