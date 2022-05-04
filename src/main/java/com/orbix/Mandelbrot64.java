@@ -36,7 +36,7 @@ public class Mandelbrot64 extends JFrame{
         
         update(scale, x, y);
         
-        HashSet<Integer> pressed = new HashSet<Integer>();
+        final HashSet<Integer> pressed = new HashSet<Integer>();
         MouseAdapter mouseAd = new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 mx = (double)(e.getX()-dx/2)/dy;
