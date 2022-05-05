@@ -1,5 +1,5 @@
 module com.orbix {
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires aparapi;
     requires java.desktop;
