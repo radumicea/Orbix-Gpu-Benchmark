@@ -10,79 +10,35 @@ public class FileLogger implements ILogger
     private final FileWriter fw;
 
     /**
-     * Will create an empty file to be written into.
-     * @param s : name of the file. If such file already exists, it will be cleared.
+     * @param s : name of the file.
      * @throws IOException
      */
     public FileLogger(String s) throws IOException
     {
-        f = new File(s);
-        f.delete();
-        f.createNewFile();
-        fw = new FileWriter(f);
+        f = new File(s + ".csv");
+        if (!f.exists())
+        {
+            f.createNewFile();
+            fw = new FileWriter(f, true);
+            fw.write("User,GPU,Benchmark,Runtime,Score\n");
+        }
+        else
+        {
+            fw = new FileWriter(f, true);
+        }
     }
 
     @Override
-    public void write(long l)
+    public void write(String GPUName, String benchName,
+        long runtime, TimeUnit timeUnit, int score)
     {
         try
         {
-            fw.write(Long.toString(l));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void write(String s)
-    {
-        try
-        {
-            fw.write(s);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void write(Object... objects)
-    {
-        for (Object object : objects)
-        {
-            try
-            {
-                fw.write(String.valueOf(object));
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void writeTime(double measured, TimeUnit unit)
-    {
-        try
-        {
-            fw.write(TimeUnit.toUnit(measured, unit));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void writeTime(String string, double measured, TimeUnit unit)
-    {
-        try
-        {
-            fw.write(string + TimeUnit.toUnit(measured, unit));
+            fw.write("\"" + System.getProperty("user.name") + "\",");
+            fw.write("\"" + GPUName + "\",");
+            fw.write("\"" + benchName + "\",");
+            fw.write(TimeUnit.toUnit(runtime, timeUnit) + ",");
+            fw.write(String.valueOf(score) + "\n");
         }
         catch (IOException e)
         {

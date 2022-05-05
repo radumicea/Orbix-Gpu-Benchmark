@@ -10,13 +10,13 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="342.0" prefWidth="607.0" style="-fx-background-color: #29d6b8; -fx-border-color: #E24460;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orbix.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="342.0" prefWidth="607.0" style="-fx-background-color: #29d6b8; -fx-border-color: #E24460;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orbix.Controller">
     <left>
         <AnchorPane prefHeight="400.0" prefWidth="290.0" BorderPane.alignment="CENTER">
             <children>
                 <ImageView fitHeight="342.0" fitWidth="607.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@fundal.png" />
+                        <Image url="@background.png" />
                     </image>
                 </ImageView>
             <Text fill="#7b3299" layoutX="547.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="O" textAlignment="CENTER" wrappingWidth="29.33660888671875">

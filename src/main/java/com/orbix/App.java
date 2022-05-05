@@ -12,6 +12,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/orbix/view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 607, 342);
+        stage.setResizable(false);
         stage.setTitle("ORBIX");
         stage.setScene(scene);
         stage.show();
