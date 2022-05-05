@@ -5,6 +5,7 @@
     <groupId>com.orbix</groupId>
     <artifactId>orbix_gpu_benchmark</artifactId>
     <version>1</version>
+    <packaging>jar</packaging>
 
     <name>orbix_gpu_benchmark</name>
     <url>https://github.com/radumicea/Orbix-Gpu-Benchmark</url>
@@ -54,6 +55,30 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>com.orbix.App</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                            <manifest>
+                                <mainClass>
+                                    com.orbix.App
+                                </mainClass>
+                            </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
                         </configuration>
                     </execution>
                 </executions>

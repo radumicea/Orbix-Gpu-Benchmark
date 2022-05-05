@@ -1,4 +1,4 @@
-package com.orbix;
+package com.orbix.gui;
 
 import java.util.stream.Collectors;
 
