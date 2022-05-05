@@ -2,6 +2,9 @@ package com.orbix.bench;
 
 import com.aparapi.Kernel;
 import com.aparapi.Range;
+import com.aparapi.device.Device;
+import com.aparapi.device.OpenCLDevice;
+import com.aparapi.exception.QueryFailedException;
 
 public class MatrixMultBench implements IBenchmark
 {
@@ -107,9 +110,22 @@ public class MatrixMultBench implements IBenchmark
                 }
             }
         };
-
-        Range range = Range.create(r1 * c2);
-        kernel.execute(range);
+        
+        Device device = OpenCLDevice.listDevices(null).get(0);
+        try
+        {
+            int maxGroupSize = kernel.getKernelMaxWorkGroupSize(device);
+            // MUST BE A FACTOR OF maxGroupSize!!!
+            int rangeSize = (int)Math.ceil(r1 * c2 / (float)maxGroupSize) * maxGroupSize;
+            // There is a bug in aparapi. Must explicitly state the localWidth
+            // (aka groupSize) when explicitly selecting a device, otherwise it won't work!
+            Range range = device.createRange(rangeSize, maxGroupSize);
+            kernel.execute(range);
+        }
+        catch (QueryFailedException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
