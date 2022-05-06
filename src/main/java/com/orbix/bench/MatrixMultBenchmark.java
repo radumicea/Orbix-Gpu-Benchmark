@@ -3,7 +3,6 @@ package com.orbix.bench;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 import com.aparapi.device.Device;
-import com.aparapi.exception.QueryFailedException;
 
 /**
  * A benchmark testing the parallelization capabilities of a GPU
@@ -71,7 +70,7 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     }
 
     @Override
-    public void warmUp()
+    public void warmUp() throws Exception
     {
         final int r1 = 100;
         final int c1_r2 = 100;
@@ -85,7 +84,7 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     }
 
     @Override
-    public void run()
+    public void run() throws Exception
     {
         runHelper(GPU, r1, c1_r2, c2, a, b, res);
     }
@@ -95,7 +94,7 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     private static void runHelper(
         final Device GPU,
         final int r1, final int c1_r2, final int c2,
-        final byte[] a, final byte[] b, final byte[] res)
+        final byte[] a, final byte[] b, final byte[] res) throws Exception
     {
         Kernel kernel = new Kernel()
         {
@@ -112,20 +111,12 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
             }
         };
 
-        int maxGroupSize;
-        try
-        {
-            maxGroupSize = kernel.getKernelMaxWorkGroupSize(GPU);
-            // MUST BE A FACTOR OF maxGroupSize!!!
-            int rangeSize = (int)Math.ceil(r1 * c2 / (float)maxGroupSize) * maxGroupSize;
-            // There is a bug in aparapi. Must explicitly state the localWidth
-            // (aka groupSize) when explicitly selecting a device, otherwise it won't work!
-            Range range = GPU.createRange(rangeSize, maxGroupSize);
-            kernel.execute(range);
-        }
-        catch (QueryFailedException e)
-        {
-            e.printStackTrace();
-        }
+        int maxGroupSize = kernel.getKernelMaxWorkGroupSize(GPU);
+        // MUST BE A FACTOR OF maxGroupSize!!!
+        int rangeSize = (int)Math.ceil(r1 * c2 / (float)maxGroupSize) * maxGroupSize;
+        // There is a bug in aparapi. Must explicitly state the localWidth
+        // (aka groupSize) when explicitly selecting a device, otherwise it won't work!
+        Range range = GPU.createRange(rangeSize, maxGroupSize);
+        kernel.execute(range);
     }
 }

@@ -4,7 +4,8 @@ module com.orbix {
     requires aparapi;
     requires java.desktop;
 
-    opens com.orbix.gui to javafx.fxml, javafx.graphics, aparapi;
+    opens com.orbix.gui to javafx.graphics;
+    opens com.orbix.gui.Controllers to javafx.fxml, aparapi;
     opens com.orbix.bench to aparapi;
     exports com.orbix;
 }

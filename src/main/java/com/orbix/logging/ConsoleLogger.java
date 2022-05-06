@@ -6,6 +6,7 @@ public class ConsoleLogger implements ILogger
     public void write(String GPUName, String benchName,
         long runtime, TimeUnit timeUnit, int score)
     {
+        System.out.println("User: " + System.getProperty("user.name"));
         System.out.println("GPU: " + GPUName);
         System.out.println("Benchmark: " + benchName);
         System.out.println("Runtime: " + TimeUnit.toUnit(runtime, timeUnit));

@@ -9,7 +9,7 @@ public abstract class AbstractGPUBenchmark implements IBenchmark
     protected final Device getGPU(String GPUName)
     {
         return OpenCLDevice.listDevices(TYPE.GPU).stream()
-                           .filter(d -> d.getName().compareTo(GPUName) == 0)
+                           .filter(d -> d.getName().equals(GPUName))
                            .findFirst().get();
     }
 }

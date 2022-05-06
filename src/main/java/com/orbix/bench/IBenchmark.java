@@ -12,7 +12,11 @@ public interface IBenchmark
     void initialize(Object... params);
     /**
      * Call the <code>warmUp</code> method after initializing, before calling <code>run</code>.
+     * @throws Exception
      */
-    void warmUp();
-    void run();
+    void warmUp() throws Exception;
+    /**
+     * @throws Exception
+     */
+    void run() throws Exception;
 }
