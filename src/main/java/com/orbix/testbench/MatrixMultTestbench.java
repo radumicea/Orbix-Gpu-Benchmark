@@ -21,18 +21,18 @@ import javafx.scene.control.Alert.AlertType;
  * Tests parallelization capabilities of GPU through a highly
  * parallelizable task, namely matrix multiplication.
  */
-public final class GPUTestBench
+public final class MatrixMultTestbench
 {
     private static final String logsFileName = "logs";
 
-    private GPUTestBench() { }
+    private MatrixMultTestbench() { }
 
     /**
      * @param params
      * <code>params[0]</code> must be the name of the GPU to be benchmarked.
      * @throws Exception
      */
-    public static BenchResult runMatrixMultBench(Object... params) throws Exception
+    public static BenchResult run(Object... params) throws Exception
     {
         IBenchmark b = new MatrixMultBenchmark();
         ILogger log;

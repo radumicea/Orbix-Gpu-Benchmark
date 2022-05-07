@@ -1,7 +1,7 @@
 package com.orbix.gui.Controllers.Handlers;
 
 import com.orbix.gui.Controllers.BenchmarkingMethods;
-import com.orbix.testbench.GPUTestBench;
+import com.orbix.testbench.MatrixMultTestbench;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -52,7 +52,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             switch (benchMethod)
             {
                 case MatrixMultiplication:
-                    result = GPUTestBench.runMatrixMultBench(GPUName).getResult();
+                    result = MatrixMultTestbench.run(GPUName).getResult();
                     break;
 
                 default:
