@@ -1,7 +1,5 @@
 package com.orbix.testbench;
 
-import java.io.IOException;
-
 import com.orbix.bench.IBenchmark;
 import com.orbix.bench.MatrixMultBenchmark;
 import com.orbix.logging.ConsoleLogger;
@@ -12,23 +10,26 @@ import com.orbix.logging.TimeUnit;
 import com.orbix.timing.ITimer;
 import com.orbix.timing.Timer;
 
+import java.io.IOException;
+import java.time.Instant;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
 /**
- * Tests parallelization capabilities of GPU through a highly parallelizable task, namely matrix multiplication.
+ * Tests parallelization capabilities of GPU through a highly
+ * parallelizable task, namely matrix multiplication.
  */
 public final class GPUTestBench
 {
+    private static final String logsFileName = "logs";
+
     private GPUTestBench() { }
 
     /**
      * @param params
-     * <code>params[0]</code> must be the name of the GPU to be benchmarked.<br></br>
-     * optional: three integers, representing the <code>r1</code>, <code>c1_r2</code>
-     * and <code>c2</code> of the matrices.
-     * if the three integers are not provided, a standard benchmark will take place.
+     * <code>params[0]</code> must be the name of the GPU to be benchmarked.
      * @throws Exception
      */
     public static BenchResult runMatrixMultBench(Object... params) throws Exception
@@ -37,12 +38,12 @@ public final class GPUTestBench
         ILogger log;
         try
         {
-            log = new CSVLogger("logs");
+            log = new CSVLogger(logsFileName);
         }
         catch (IOException e)
         {
             log = new ConsoleLogger();
-            displayFileWarningAlert();
+            displayFileOpenWarningAlert();
             e.printStackTrace();
         }
         ITimer timer = new Timer();
@@ -55,24 +56,46 @@ public final class GPUTestBench
         long elapsed = timer.stop();
 
         BenchResult benchResult = new BenchResult(
+                        Instant.now().toString(),
                         System.getProperty("user.name"),
                         (String)params[0],
                         "Matrix Multiplication",
                         TimeUnit.toUnit(elapsed, TimeUnit.SEC),
                         -1);
 
-        log.write(benchResult);
+        try
+        {
+            log.write(benchResult);
+        }
+        catch (Exception e)
+        {
+            new ConsoleLogger().write(benchResult);
+            displayFileWriteWarningAlert();
+            e.printStackTrace();
+        }
         log.close();
 
         return benchResult;
     }
 
-    private static void displayFileWarningAlert()
+    private static void displayFileOpenWarningAlert()
     {
         Alert a = new Alert(AlertType.WARNING,
-                            "Can not open the logs file. Will write to the console instead.",
+                            "Can not open the " + logsFileName +
+                            " file. Will write to the console instead.",
                             ButtonType.OK);
         a.setTitle("File Open Warning");
+        a.setHeaderText(null);
+        a.show();
+    }
+
+    private static void displayFileWriteWarningAlert()
+    {
+        Alert a = new Alert(AlertType.WARNING,
+                            "Can not write to the " + logsFileName +
+                            " file. Will write to the console instead.",
+                            ButtonType.OK);
+        a.setTitle("File Write Warning");
         a.setHeaderText(null);
         a.show();
     }

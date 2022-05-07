@@ -20,7 +20,7 @@ public class CSVLogger implements ILogger
         {
             f.createNewFile();
             fw = new FileWriter(f, true);
-            fw.write("User,GPU,Benchmark,Runtime,Score\n");
+            fw.write("DateTime,User,GPU,Benchmark,Runtime,Score\n");
         }
         else
         {
@@ -29,21 +29,11 @@ public class CSVLogger implements ILogger
     }
 
     @Override
-    public void write(BenchResult benchResult)
+    public void write(BenchResult benchResult) throws IOException
     {
-        try
-        {
-            fw.write(benchResult.getCSVResult());
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        fw.write(benchResult.getCSVResult());
     }
 
-    /**
-     * Must be called after we are done writing in order to make sure everything has been flushed.
-     */
     @Override
     public void close()
     {

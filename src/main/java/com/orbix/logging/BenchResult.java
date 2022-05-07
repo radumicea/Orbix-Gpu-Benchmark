@@ -1,5 +1,9 @@
 package com.orbix.logging;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,40 +12,17 @@ public class BenchResult
 {
     private static final ObjectMapper objMapper = new ObjectMapper();
 
-    private final String userName;
-    private final String GPUName;
-    private final String benchName;
-    private final String runTime;
-    private final int score;
+    public final String utcDateTime;
+    public final String userName;
+    public final String GPUName;
+    public final String benchName;
+    public final String runTime;
+    public final int score;
 
-    public String getUserName()
-    {
-        return userName;
-    }
-
-    public String getGPUName()
-    {
-        return GPUName;
-    }
-
-    public String getBenchName()
-    {
-        return benchName;
-    }
-
-    public String getRunTime()
-    {
-        return runTime;
-    }
-
-    public int getScore()
-    {
-        return score;
-    }
-
-    public BenchResult(String userName, String GPUName,
+    public BenchResult(String utcDateTime, String userName, String GPUName,
                        String benchName, String runTime, int score)
     {
+        this.utcDateTime = utcDateTime;
         this.userName = userName;
         this.GPUName = GPUName;
         this.benchName = benchName;
@@ -53,7 +34,10 @@ public class BenchResult
     public String getResult()
     {
         return
-        "User: " + userName +
+        "DateTime: " +
+        LocalDateTime.parse(utcDateTime, DateTimeFormatter.ISO_DATE_TIME)
+                     .atZone(ZoneId.systemDefault()) + 
+        "\nUser: " + userName +
         "\nGPU: " + GPUName +
         "\nBenchmark: " + benchName +
         "\nRuntime: " + runTime +
@@ -64,6 +48,8 @@ public class BenchResult
     public String getCSVResult()
     {
         return
+        "\"" + LocalDateTime.parse(utcDateTime, DateTimeFormatter.ISO_DATE_TIME)
+                            .atZone(ZoneId.systemDefault()) + "\"," +
         "\"" + userName + "\"," +
         "\"" + GPUName + "\"," +
         "\"" + benchName + "\"," +
@@ -72,16 +58,8 @@ public class BenchResult
     }
 
     @JsonIgnore
-    public String getJSONResult()
+    public String getJSONResult() throws JsonProcessingException
     {
-        try
-        {
-            return objMapper.writeValueAsString(this);
-        }
-        catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-            return getCSVResult();
-        }
+        return objMapper.writeValueAsString(this);
     }
 }

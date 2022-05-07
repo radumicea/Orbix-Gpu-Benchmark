@@ -8,9 +8,6 @@ public class ConsoleLogger implements ILogger
         System.out.println(benchResult.getResult());
     }
 
-    /**
-     * Not necessary for ConsoleLogger.
-     */
     @Override
     public void close() { }
 }

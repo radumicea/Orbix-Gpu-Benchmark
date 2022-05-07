@@ -1,5 +1,6 @@
 package com.orbix.gui.Controllers.Handlers;
 
+import com.orbix.gui.Controllers.BenchmarkingMethods;
 import com.orbix.testbench.GPUTestBench;
 
 import javafx.event.ActionEvent;
@@ -13,43 +14,78 @@ import javafx.scene.control.Alert.AlertType;
 public class RunButtonHandler implements EventHandler<ActionEvent>
 {
     private final ChoiceBox GPULabel;
+    private final ChoiceBox methodLabel;
 
-    public RunButtonHandler(ChoiceBox GPULabel)
+    public RunButtonHandler(ChoiceBox GPULabel, ChoiceBox methodLabel)
     {
         this.GPULabel = GPULabel;
+        this.methodLabel = methodLabel;
     }
 
     @Override
     public void handle(ActionEvent event)
     {
-        String GPUName =(String)GPULabel.getSelectionModel()
-                                        .getSelectedItem();
+        String GPUName = (String)GPULabel.getSelectionModel()
+                                         .getSelectedItem();
+
+        BenchmarkingMethods benchMethod = (BenchmarkingMethods)methodLabel.getSelectionModel()
+                                                                          .getSelectedItem();
+
         if (GPUName == null)
         {
-            displayGPUNotSelectedAlert();
+            displayNotSelectedAlert(
+                "Please select a GPU first.", "GPU not selected");
+            return;
         }
-        else
+
+        if (benchMethod == null)
         {
-            try
+            displayNotSelectedAlert(
+                "Please select a benchmarking method first.", "Method not selected");
+            return;
+        }
+
+        try
+        {
+            String result = null;
+
+            switch (benchMethod)
             {
-                String result = GPUTestBench.runMatrixMultBench(GPUName).getResult();
-                displaySuccessAlert(result);
-                
+                case MatrixMultiplication:
+                    result = GPUTestBench.runMatrixMultBench(GPUName).getResult();
+                    break;
+
+                default:
+                    displayNotImplementedMethod();
+                    return;
             }
-            catch (Exception e)
-            {
-                displayBenchmarkError();
-                e.printStackTrace();
-            }
+
+            displaySuccessAlert(result);
+            
+        }
+        catch (Exception e)
+        {
+            displayBenchmarkError();
+            e.printStackTrace();
         }
     }
 
-    private static void displayGPUNotSelectedAlert()
+    private static void displayNotSelectedAlert(String message, String title)
     {
         Alert a = new Alert(AlertType.INFORMATION,
-                            "Please select a GPU first.",
+                            message,
                             ButtonType.OK);
-        a.setTitle("GPU not selected");
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.show();
+    }
+
+    private static void displayNotImplementedMethod()
+    {
+        Alert a = new Alert(AlertType.ERROR,
+                            "The selected method is not implemented!",
+                            ButtonType.OK);
+        a.setTitle("Method not implemented");
         a.setHeaderText(null);
         a.show();
     }
@@ -67,7 +103,8 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
     private static void displayBenchmarkError()
     {
         Alert a = new Alert(AlertType.ERROR,
-                            "There was an error running the benchmark. Please check the console for the stack trace.",
+                            "There was an error running the benchmark. " + 
+                            "Please check the console for the stack trace.",
                             ButtonType.OK);
         a.setTitle("Error");
         a.setHeaderText(null);
