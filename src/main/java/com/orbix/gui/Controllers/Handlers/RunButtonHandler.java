@@ -97,6 +97,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         });
         testBench.setOnFailed((f) -> {
             running = false; displayBenchmarkError();
+            testBench.getException().printStackTrace();
             return;
         });
     }
