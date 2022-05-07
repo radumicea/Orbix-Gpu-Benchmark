@@ -1,10 +1,13 @@
 package com.orbix.testbench;
 
+import com.orbix.logging.BenchResult;
+
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
-abstract class AbstractTestBench
+public abstract class AbstractTestBench extends Task<BenchResult>
 {
     protected final static void displayFileOpenWarningAlert(String logsFileName)
     {

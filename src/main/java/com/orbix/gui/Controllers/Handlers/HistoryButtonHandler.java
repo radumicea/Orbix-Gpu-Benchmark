@@ -22,6 +22,12 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent>
     @Override
     public void handle(ActionEvent event)
     {
+        if (RunButtonHandler.running)
+        {
+            RunButtonHandler.displayRunningAlert("You can't open the history while the benchmark is running.");
+            return;
+        }
+
         try
         {
             Desktop.getDesktop().open(new File(logsFileName + ".csv"));

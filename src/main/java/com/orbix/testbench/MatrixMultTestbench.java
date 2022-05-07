@@ -20,18 +20,16 @@ import java.time.Instant;
 public final class MatrixMultTestBench extends AbstractTestBench
 {
     private final String logsFileName;
+    private final String GPUName;
 
-    public MatrixMultTestBench(String logsFileName)
+    public MatrixMultTestBench(String logsFileName, String GPUName)
     {
         this.logsFileName = logsFileName;
+        this.GPUName = GPUName;
     }
 
-    /**
-     * @param params
-     * <code>params[0]</code> must be the name of the GPU to be benchmarked.
-     * @throws Exception
-     */
-    public BenchResult run(Object... params) throws Exception
+    @Override
+    protected BenchResult call() throws Exception
     {
         IBenchmark b = new MatrixMultBenchmark();
         ILogger log;
@@ -47,7 +45,7 @@ public final class MatrixMultTestBench extends AbstractTestBench
         }
         ITimer timer = new Timer();
 
-        b.initialize(params);
+        b.initialize(GPUName);
         b.warmUp();
 
         timer.start();
@@ -57,7 +55,7 @@ public final class MatrixMultTestBench extends AbstractTestBench
         BenchResult benchResult = new BenchResult(
                         Instant.now().toString(),
                         System.getProperty("user.name"),
-                        (String)params[0],
+                        GPUName,
                         "Matrix Multiplication",
                         TimeUnit.toUnit(elapsed, TimeUnit.SEC),
                         -1);

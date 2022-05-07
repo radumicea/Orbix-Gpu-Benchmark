@@ -1,6 +1,7 @@
 package com.orbix.gui.Controllers.Handlers;
 
 import com.orbix.gui.Controllers.BenchmarkingMethods;
+import com.orbix.testbench.AbstractTestBench;
 import com.orbix.testbench.MatrixMultTestBench;
 
 import javafx.event.ActionEvent;
@@ -15,13 +16,17 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
 {
     private final ChoiceBox GPULabel;
     private final ChoiceBox methodLabel;
-    private final MatrixMultTestBench mmtb;
+    private final String logsFileName;
 
-    public RunButtonHandler(String logsFileName, ChoiceBox GPULabel, ChoiceBox methodLabel)
+    static volatile AbstractTestBench testBench;
+    static volatile boolean running;
+
+    public RunButtonHandler(String logsFileName, ChoiceBox GPULabel,
+                            ChoiceBox methodLabel)
     {
         this.GPULabel = GPULabel;
         this.methodLabel = methodLabel;
-        mmtb = new MatrixMultTestBench(logsFileName);
+        this.logsFileName = logsFileName;
     }
 
     @Override
@@ -30,13 +35,15 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         String GPUName = (String)GPULabel.getSelectionModel()
                                          .getSelectedItem();
 
-        BenchmarkingMethods benchMethod = (BenchmarkingMethods)methodLabel.getSelectionModel()
-                                                                          .getSelectedItem();
+        BenchmarkingMethods benchMethod =
+            (BenchmarkingMethods)methodLabel.getSelectionModel()
+                                            .getSelectedItem();
 
         if (GPUName == null)
         {
             displayNotSelectedAlert(
-                "Please select a GPU first.", "GPU not selected");
+                "Please select a GPU first.",
+                "GPU not selected");
             return;
         }
 
@@ -47,22 +54,26 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             return;
         }
 
+        if (running)
+        {
+            displayRunningAlert("The benchmark is already running.");
+            return;
+        }
+
         try
         {
-            String result = null;
-
             switch (benchMethod)
             {
                 case MatrixMultiplication:
-                    result = mmtb.run(GPUName).getResult();
+                    testBench = new MatrixMultTestBench(logsFileName, GPUName);
+                    setTestBench();
+                    new Thread(testBench).start();
                     break;
 
                 default:
                     displayNotImplementedMethod();
                     return;
             }
-
-            displaySuccessAlert(result);
             
         }
         catch (Exception e)
@@ -72,12 +83,40 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         }
     }
 
+    private static void setTestBench()
+    {
+        testBench.setOnRunning((r) -> { running = true; });
+        testBench.setOnSucceeded((s) -> {
+            displaySuccessAlert(testBench.getValue().getResult());
+            running = false;
+        });
+        testBench.setOnCancelled((c) -> {
+            displayCancelledAlert();
+            running = false;
+            return;
+        });
+        testBench.setOnFailed((f) -> {
+            running = false; displayBenchmarkError();
+            return;
+        });
+    }
+
     private static void displayNotSelectedAlert(String message, String title)
     {
         Alert a = new Alert(AlertType.INFORMATION,
                             message,
                             ButtonType.OK);
         a.setTitle(title);
+        a.setHeaderText(null);
+        a.show();
+    }
+
+    static void displayRunningAlert(String message)
+    {
+        Alert a = new Alert(AlertType.INFORMATION,
+                            message,
+                            ButtonType.OK);
+        a.setTitle("Running");
         a.setHeaderText(null);
         a.show();
     }
@@ -99,6 +138,16 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                             ButtonType.OK);
         a.setTitle("Succes");
         a.setHeaderText(result);
+        a.show();
+    }
+
+    private static void displayCancelledAlert()
+    {
+        Alert a = new Alert(AlertType.INFORMATION,
+                            "Benchmark has been cancelled!",
+                            ButtonType.OK);
+        a.setTitle("Cancelled");
+        a.setHeaderText(null);
         a.show();
     }
 
