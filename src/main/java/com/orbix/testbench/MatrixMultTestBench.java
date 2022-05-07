@@ -49,6 +49,7 @@ public final class MatrixMultTestBench extends AbstractTestBench
                 displayFileOpenWarningAlert(logsFileName);
                 e.printStackTrace();
             }
+            
             ITimer timer = new Timer();
 
             bench.initialize(GPUName);
