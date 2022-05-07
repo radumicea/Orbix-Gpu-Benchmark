@@ -15,25 +15,17 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     private static final int C1_R2 = 10_000;
     private static final int C2 = 10_000;
 
+    private static Kernel kernel;
+
     private Device GPU;
 
-    private byte a[];
-    private byte b[];
-    private byte res[];
+    private boolean running;
 
-    /**
-     * @param params
-     * <code>params[0]</code> must be the name of the GPU to be benchmarked.<br></br>
-     */
-    @Override
-    public void initialize(Object... params)
+    private static byte a[] = new byte[R1 * C1_R2];
+    private static byte b[] = new byte[C1_R2 * C2];
+    private static byte res[] = new byte[R1 * C2];
+    static
     {
-        GPU = getGPU((String)params[0]);
-
-        a = new byte[R1 * C1_R2];
-        b = new byte[C1_R2 * C2];
-        res = new byte[R1 * C2];
-
         initMatrices(a, b);
     }
 
@@ -55,6 +47,17 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
         }
     }
 
+    /**
+     * @param params
+     * <code>params[0]</code> must be the name of the GPU to be benchmarked.<br></br>
+     */
+    @Override
+    public void initialize(Object... params)
+    {
+        running = false;
+        GPU = getGPU((String)params[0]);
+    }
+
     @Override
     public void warmUp() throws Exception
     {
@@ -72,6 +75,7 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     @Override
     public void run() throws Exception
     {
+        running = true;
         runHelper(GPU, R1, C1_R2, C2, a, b, res);
     }
 
@@ -82,7 +86,7 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
         final int r1, final int c1_r2, final int c2,
         final byte[] a, final byte[] b, final byte[] res) throws Exception
     {
-        Kernel kernel = new Kernel()
+        kernel = new Kernel()
         {
             @Override
             public void run()
@@ -104,5 +108,25 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
         // (aka groupSize) when explicitly selecting a device, otherwise it won't work!
         Range range = GPU.createRange(rangeSize, maxGroupSize);
         kernel.execute(range);
+    }
+
+    @Override
+    public void cancel()
+    {
+        if (running)
+        {
+            kernel.cancelMultiPass();
+            running = false;
+        }
+    }
+
+    @Override
+    public void cleanUp()
+    {
+        running = false;
+        if (kernel != null)
+        {
+            kernel.dispose();
+        }
     }
 }

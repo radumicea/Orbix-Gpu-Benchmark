@@ -19,4 +19,9 @@ public interface IBenchmark
      * @throws Exception
      */
     void run() throws Exception;
+    void cancel();
+    /**
+     * User after <code>run()</code>.
+     */
+    void cleanUp();
 }

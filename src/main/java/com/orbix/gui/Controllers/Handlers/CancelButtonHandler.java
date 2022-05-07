@@ -10,7 +10,7 @@ public class CancelButtonHandler implements EventHandler<ActionEvent>
     {
         if (RunButtonHandler.running)
         {
-            RunButtonHandler.testBench.cancel();
+            RunButtonHandler.testBench.cancel(true);
         }
     }
 }

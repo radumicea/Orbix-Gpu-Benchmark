@@ -22,6 +22,8 @@ public final class MatrixMultTestBench extends AbstractTestBench
     private final String logsFileName;
     private final String GPUName;
 
+    private Exception exception;
+
     public MatrixMultTestBench(String logsFileName, String GPUName)
     {
         this.logsFileName = logsFileName;
@@ -31,45 +33,78 @@ public final class MatrixMultTestBench extends AbstractTestBench
     @Override
     protected BenchResult call() throws Exception
     {
-        IBenchmark b = new MatrixMultBenchmark();
-        ILogger log;
-        try
-        {
-            log = new CSVLogger(logsFileName);
-        }
-        catch (IOException e)
-        {
-            log = new ConsoleLogger();
-            displayFileOpenWarningAlert(logsFileName);
-            e.printStackTrace();
-        }
-        ITimer timer = new Timer();
-
-        b.initialize(GPUName);
-        b.warmUp();
-
-        timer.start();
-        b.run();
-        long elapsed = timer.stop();
-
-        BenchResult benchResult = new BenchResult(
-                        Instant.now().toString(),
-                        System.getProperty("user.name"),
-                        GPUName,
-                        "Matrix Multiplication",
-                        TimeUnit.toUnit(elapsed, TimeUnit.SEC),
-                        -1);
+        IBenchmark bench = new MatrixMultBenchmark();
+        ILogger log = null;
+        BenchResult benchResult = null;
 
         try
         {
-            log.write(benchResult);
+            try
+            {
+                log = new CSVLogger(logsFileName);
+            }
+            catch (IOException e)
+            {
+                log = new ConsoleLogger();
+                displayFileOpenWarningAlert(logsFileName);
+                e.printStackTrace();
+            }
+            ITimer timer = new Timer();
+
+            bench.initialize(GPUName);
+            bench.warmUp();
+
+            Thread thread = new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        bench.run();
+                    }
+                    catch (Exception e)
+                    {
+                        exception = e;
+                    }
+                }
+            };
+
+            timer.start();
+            thread.start();
+            thread.join();
+            long elapsed = timer.stop();
+
+            if (exception != null)
+            {
+                throw exception;
+            }
+
+            benchResult = new BenchResult(
+                Instant.now().toString(),
+                System.getProperty("user.name"),
+                GPUName,
+                "Matrix Multiplication",
+                TimeUnit.toUnit(elapsed, TimeUnit.SEC),
+                -1);
+
+            try
+            {
+                log.write(benchResult);
+            }
+            catch (Exception e)
+            {
+                new ConsoleLogger().write(benchResult);
+                displayFileWriteWarningAlert(logsFileName);
+                e.printStackTrace();
+            }
         }
-        catch (Exception e)
+        catch (InterruptedException e)
         {
-            new ConsoleLogger().write(benchResult);
-            displayFileWriteWarningAlert(logsFileName);
-            e.printStackTrace();
+            bench.cancel();
         }
+
+        bench.cleanUp();
         log.close();
 
         return benchResult;

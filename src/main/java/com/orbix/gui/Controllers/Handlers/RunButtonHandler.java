@@ -14,12 +14,12 @@ import javafx.scene.control.Alert.AlertType;
 @SuppressWarnings("rawtypes")
 public class RunButtonHandler implements EventHandler<ActionEvent>
 {
+    static volatile AbstractTestBench testBench;
+    static volatile boolean running;
+
     private final ChoiceBox GPULabel;
     private final ChoiceBox methodLabel;
     private final String logsFileName;
-
-    static volatile AbstractTestBench testBench;
-    static volatile boolean running;
 
     public RunButtonHandler(String logsFileName, ChoiceBox GPULabel,
                             ChoiceBox methodLabel)
