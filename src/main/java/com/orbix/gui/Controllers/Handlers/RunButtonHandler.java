@@ -93,12 +93,14 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         testBench.setOnCancelled((c) -> {
             displayCancelledAlert();
             running = false;
-            return;
         });
         testBench.setOnFailed((f) -> {
-            running = false; displayBenchmarkError();
-            testBench.getException().printStackTrace();
-            return;
+            displayBenchmarkError(); running = false;
+            Throwable e = testBench.getException();
+            if (e != null)
+            {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -156,7 +158,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
     {
         Alert a = new Alert(AlertType.ERROR,
                             "There was an error running the benchmark. " + 
-                            "Check the console for the stack trace.",
+                            "Check the console for more information.",
                             ButtonType.OK);
         a.setTitle("Error");
         a.setHeaderText(null);

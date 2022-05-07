@@ -43,7 +43,7 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent>
     {
         Alert a = new Alert(AlertType.ERROR,
                             "Can not open the " + logsFileName +
-                            " file. Check the console for the stack trace",
+                            " file. Check the console for more information.",
                             ButtonType.OK);
         a.setTitle("File Open Error");
         a.setHeaderText(null);
