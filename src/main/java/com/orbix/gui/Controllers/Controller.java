@@ -1,7 +1,8 @@
 package com.orbix.gui.Controllers;
 
 import static com.orbix.gui.Controllers.BenchmarkingMethods.*;
-import com.orbix.gui.Controllers.Handlers.RunButtonHandler;
+
+import com.orbix.gui.Controllers.Handlers.*;
 
 import java.util.stream.Collectors;
 
@@ -15,12 +16,16 @@ import com.aparapi.device.Device.TYPE;
 @SuppressWarnings("rawtypes")
 public class Controller
 {
+    private static final String logsFileName = "logs";
+
     @FXML
     private ChoiceBox gpu_label;
     @FXML
     private ChoiceBox method_label;
     @FXML
     private Button run_button;
+    @FXML
+    private Button history_button;
 
     @SuppressWarnings("unchecked")
     public void initialize()
@@ -35,6 +40,7 @@ public class Controller
                     .addAll(StandardBenchmark,
                             MatrixMultiplication, Fractals, Mandals);
 
-        run_button.setOnAction(new RunButtonHandler(gpu_label, method_label));
+        run_button.setOnAction(new RunButtonHandler(logsFileName, gpu_label, method_label));
+        history_button.setOnAction(new HistoryButtonHandler(logsFileName));
     }
 }

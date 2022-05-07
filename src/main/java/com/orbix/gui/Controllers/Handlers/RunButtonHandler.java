@@ -1,7 +1,7 @@
 package com.orbix.gui.Controllers.Handlers;
 
 import com.orbix.gui.Controllers.BenchmarkingMethods;
-import com.orbix.testbench.MatrixMultTestbench;
+import com.orbix.testbench.MatrixMultTestBench;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,11 +15,13 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
 {
     private final ChoiceBox GPULabel;
     private final ChoiceBox methodLabel;
+    private final MatrixMultTestBench mmtb;
 
-    public RunButtonHandler(ChoiceBox GPULabel, ChoiceBox methodLabel)
+    public RunButtonHandler(String logsFileName, ChoiceBox GPULabel, ChoiceBox methodLabel)
     {
         this.GPULabel = GPULabel;
         this.methodLabel = methodLabel;
+        mmtb = new MatrixMultTestBench(logsFileName);
     }
 
     @Override
@@ -41,7 +43,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         if (benchMethod == null)
         {
             displayNotSelectedAlert(
-                "Please select a benchmarking method first.", "Method not selected");
+                "Please select a benchmarking method first.", "Info");
             return;
         }
 
@@ -52,7 +54,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             switch (benchMethod)
             {
                 case MatrixMultiplication:
-                    result = MatrixMultTestbench.run(GPUName).getResult();
+                    result = mmtb.run(GPUName).getResult();
                     break;
 
                 default:
@@ -85,7 +87,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         Alert a = new Alert(AlertType.ERROR,
                             "The selected method is not implemented!",
                             ButtonType.OK);
-        a.setTitle("Method not implemented");
+        a.setTitle("Not Implemented Error");
         a.setHeaderText(null);
         a.show();
     }
@@ -104,7 +106,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
     {
         Alert a = new Alert(AlertType.ERROR,
                             "There was an error running the benchmark. " + 
-                            "Please check the console for the stack trace.",
+                            "Check the console for the stack trace.",
                             ButtonType.OK);
         a.setTitle("Error");
         a.setHeaderText(null);
