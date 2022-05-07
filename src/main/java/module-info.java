@@ -5,6 +5,9 @@ module com.orbix
     requires java.desktop;
     requires com.fasterxml.jackson.databind;
     requires aparapi;
+    requires org.mongodb.driver.sync.client;
+    requires org.mongodb.bson;
+    requires org.mongodb.driver.core;
 
     opens com.orbix.gui to javafx.graphics;
     opens com.orbix.gui.Controllers to javafx.fxml, aparapi;
