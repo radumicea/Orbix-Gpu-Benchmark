@@ -2,7 +2,7 @@ package com.orbix.logging;
 
 public interface ILogger
 {
-    void write(String GPUName, String benchName, long runtime, TimeUnit timeUnit, int score);
+    void write(BenchResult benchResult);
     /**
      * Used after we are done with the logger to make sure we flush everything.
      */

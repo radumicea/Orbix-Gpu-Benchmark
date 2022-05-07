@@ -5,7 +5,8 @@ import java.io.IOException;
 import com.orbix.bench.IBenchmark;
 import com.orbix.bench.MatrixMultBenchmark;
 import com.orbix.logging.ConsoleLogger;
-import com.orbix.logging.FileLogger;
+import com.orbix.logging.BenchResult;
+import com.orbix.logging.CSVLogger;
 import com.orbix.logging.ILogger;
 import com.orbix.logging.TimeUnit;
 import com.orbix.timing.ITimer;
@@ -30,13 +31,13 @@ public final class GPUTestBench
      * if the three integers are not provided, a standard benchmark will take place.
      * @throws Exception
      */
-    public static String runMatrixMultBench(Object... params) throws Exception
+    public static BenchResult runMatrixMultBench(Object... params) throws Exception
     {
         IBenchmark b = new MatrixMultBenchmark();
         ILogger log;
         try
         {
-            log = new FileLogger("logs");
+            log = new CSVLogger("logs");
         }
         catch (IOException e)
         {
@@ -53,9 +54,17 @@ public final class GPUTestBench
         b.run();
         long elapsed = timer.stop();
 
-        log.write((String)params[0], "Matrix Multiplication", elapsed, TimeUnit.SEC, -1);
+        BenchResult benchResult = new BenchResult(
+                        System.getProperty("user.name"),
+                        (String)params[0],
+                        "Matrix Multiplication",
+                        TimeUnit.toUnit(elapsed, TimeUnit.SEC),
+                        -1);
+
+        log.write(benchResult);
         log.close();
-        return "GPU: " + (String)params[0] + "\nTook: " + TimeUnit.toUnit(elapsed, TimeUnit.SEC) + "\nTo complete: Matrix Multiplication";
+
+        return benchResult;
     }
 
     private static void displayFileWarningAlert()

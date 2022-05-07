@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 
 import com.aparapi.device.OpenCLDevice;
 import com.aparapi.device.Device.TYPE;
-import com.orbix.gui.Handlers.RunButtonHandler;
+import com.orbix.gui.Controllers.Handlers.RunButtonHandler;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
