@@ -74,14 +74,20 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     public void warmUp() throws Exception
     {
         kernel.compile(GPU);
+        runHelper(225, 225, 225);
     }
 
     @Override
     public void run() throws Exception
     {
+        runHelper(R1, C1_R2, C2);
+    }
+
+    private void runHelper(int r1, int c1_r2, int c2) throws Exception
+    {
         int maxGroupSize = kernel.getKernelMaxWorkGroupSize(GPU);
         // MUST BE A FACTOR OF groupSize!!!
-        int rangeSize = (int)Math.ceil(R1 * C2 / (float)maxGroupSize) * maxGroupSize;
+        int rangeSize = (int)Math.ceil(r1 * c2 / (float)maxGroupSize) * maxGroupSize;
         // There is a bug in aparapi. Must explicitly state the localWidth
         // (a multiple of groupSize) when explicitly selecting a device, otherwise it won't work!
         Range range = GPU.createRange(rangeSize, maxGroupSize);
