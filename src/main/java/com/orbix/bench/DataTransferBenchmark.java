@@ -6,6 +6,12 @@ import com.aparapi.device.Device;
 
 /**
  * A benchmark testing the data transfer capabilities of a GPU.
+ * <br></br>
+ * THE INTEGRATED GPU DOES NOT HAVE ITS OWN MEMORY.
+ * IT SIMPLY TAKES A CHUCK FROM THE MAIN MEMORY AND CALLS IT HIS.
+ * BECAUSE OF THIS, THE RUNTIME IS EXTREMELY FAST.
+ * IT SHOULD BE HEAVILY PENALIZED WHEN COMPUTING THE SCORE BASED
+ * ON THIS BENCHMARK.
  */
 public final class DataTransferBenchmark extends AbstractGPUBenchmark
 {
