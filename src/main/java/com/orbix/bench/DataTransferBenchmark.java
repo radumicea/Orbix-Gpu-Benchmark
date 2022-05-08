@@ -12,10 +12,12 @@ import com.aparapi.device.Device;
  * BECAUSE OF THIS, THE RUNTIME IS EXTREMELY FAST.
  * IT SHOULD BE HEAVILY PENALIZED WHEN COMPUTING THE SCORE BASED
  * ON THIS BENCHMARK.
+ * (Now, should it? The dedicated GPU also makes use of shared memory;
+ * maybe it's just that the iGPU is a lot smarter in this regard.)
  */
 public final class DataTransferBenchmark extends AbstractGPUBenchmark
 {
-    private static final int LOOPS = 25;
+    private static final int LOOPS = 100;
     private static final int _512MB = 536_870_912;
     private static final byte[] BUF;
     static
@@ -51,13 +53,13 @@ public final class DataTransferBenchmark extends AbstractGPUBenchmark
         {
             // Only dereference the first and last elements
             // in order to ensure the entire buffer is being
-            // transferred to the GPU.
+            // transferred to the GPU. (Prevent any possible
+            // sort of leazy loading or anything similar.)
             @Override
             public void run()
             {
                 byte x = arr[0];
-                arr[0] = arr[len - 1];
-                arr[len - 1] = x;
+                byte y = arr[arr.length - 1];
             }
         };
     }
