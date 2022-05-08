@@ -1,7 +1,6 @@
 package com.orbix.testbench;
 
 import com.orbix.bench.IBenchmark;
-import com.orbix.bench.MatrixMultBenchmark;
 import com.orbix.logging.ConsoleLogger;
 import com.orbix.logging.BenchResult;
 import com.orbix.logging.CSVLogger;
@@ -10,19 +9,17 @@ import com.orbix.logging.ILogger;
 import java.io.IOException;
 import java.time.Instant;
 
-/**
- * Tests parallelization capabilities of GPU through a highly
- * parallelizable task, namely matrix multiplication.
- */
-public final class MatrixMultTestBench extends AbstractTestBench
+public final class TestBench extends AbstractTestBench
 {
+    private final Class<? extends IBenchmark> benchClass;
     private final String logsFileName;
     private final String GPUName;
 
     private Exception exception;
 
-    public MatrixMultTestBench(String logsFileName, String GPUName)
+    public TestBench(Class<? extends IBenchmark> benchClass, String logsFileName, String GPUName)
     {
+        this.benchClass = benchClass;
         this.logsFileName = logsFileName;
         this.GPUName = GPUName;
     }
@@ -30,7 +27,7 @@ public final class MatrixMultTestBench extends AbstractTestBench
     @Override
     protected BenchResult call() throws Exception
     {
-        IBenchmark bench = new MatrixMultBenchmark();
+        IBenchmark bench = benchClass.getDeclaredConstructor().newInstance();
         ILogger log = null;
         BenchResult benchResult = null;
 
@@ -78,7 +75,7 @@ public final class MatrixMultTestBench extends AbstractTestBench
                 Instant.now().toString(),
                 System.getProperty("user.name"),
                 GPUName,
-                "Matrix Multiplication",
+                benchClass.getSimpleName(),
                 bench.getExecutionTimeMs(),
                 -1);
 

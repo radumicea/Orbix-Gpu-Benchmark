@@ -9,7 +9,7 @@ import com.aparapi.device.Device;
  * through a highly parallelizable task, namely matrix
  * multiplication.
  */
-public final class MatrixMultBenchmark extends AbstractGPUBenchmark
+public final class MatrixMultiplicationBenchmark extends AbstractGPUBenchmark
 {
     private static final int R1 = 10_000;
     private static final int C1_R2 = 10_000;
@@ -24,16 +24,16 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
         int i = 0;
         for (i = 0; i < a.length && i < b.length; i++)
         {
-            a[i] = (byte)RANDOM.nextInt();
-            b[i] = a[i];
+            a[i] = (byte)i;
+            b[i] = (byte)(b.length - 1 - i);
         }
         for (int j = i; j < a.length; j++)
         {
-            a[j] = (byte)RANDOM.nextInt();
+            a[j] = (byte)j;
         }
         for (int j = i; j < b.length; j++)
         {
-            b[j] = (byte)RANDOM.nextInt();
+            b[j] = (byte)j;
         }
     }
 
@@ -74,7 +74,7 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     public void warmUp() throws Exception
     {
         kernel.compile(GPU);
-        runHelper(225, 225, 225);
+        runHelper(R1 / 40, C1_R2 / 40, C2 / 40);
     }
 
     @Override
@@ -94,6 +94,12 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
         kernel.execute(range);
     }
 
+    @Override
+    public double getExecutionTimeMs()
+    {
+        return kernel.getProfileReportLastThread(GPU).get().getExecutionTime();
+    }
+
     /**
      * Will most likely not work properly.
      * There's nothing we can do about it.
@@ -108,10 +114,5 @@ public final class MatrixMultBenchmark extends AbstractGPUBenchmark
     public void cleanUp()
     {
         kernel.dispose();
-    }
-
-    public double getExecutionTimeMs()
-    {
-        return kernel.getProfileReportLastThread(GPU).get().getExecutionTime();
     }
 }

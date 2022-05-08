@@ -1,8 +1,10 @@
 package com.orbix.gui.Controllers.Handlers;
 
+import com.orbix.bench.DataTransferBenchmark;
+import com.orbix.bench.MatrixMultiplicationBenchmark;
 import com.orbix.gui.Controllers.BenchmarkingMethods;
 import com.orbix.testbench.AbstractTestBench;
-import com.orbix.testbench.MatrixMultTestBench;
+import com.orbix.testbench.TestBench;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -65,7 +67,15 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             switch (benchMethod)
             {
                 case MatrixMultiplication:
-                    testBench = new MatrixMultTestBench(logsFileName, GPUName);
+                    testBench = new TestBench(MatrixMultiplicationBenchmark.class,
+                                              logsFileName, GPUName);
+                    setTestBench();
+                    new Thread(testBench).start();
+                    break;
+
+                case DataTransfer:
+                    testBench = new TestBench(DataTransferBenchmark.class,
+                                              logsFileName, GPUName);
                     setTestBench();
                     new Thread(testBench).start();
                     break;

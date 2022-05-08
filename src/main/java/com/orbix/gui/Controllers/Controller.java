@@ -40,7 +40,7 @@ public class Controller
 
         method_label.getItems()
                     .addAll(StandardBenchmark,
-                            MatrixMultiplication, Fractals, Mandals);
+                            DataTransfer, MatrixMultiplication, Fractals);
 
         run_button.setOnAction(new RunButtonHandler(logsFileName, gpu_label, method_label));
         cancel_button.setOnAction(new CancelButtonHandler());
