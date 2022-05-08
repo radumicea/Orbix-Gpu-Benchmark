@@ -6,9 +6,6 @@ import com.orbix.logging.ConsoleLogger;
 import com.orbix.logging.BenchResult;
 import com.orbix.logging.CSVLogger;
 import com.orbix.logging.ILogger;
-import com.orbix.logging.TimeUnit;
-import com.orbix.timing.ITimer;
-import com.orbix.timing.Timer;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -49,8 +46,6 @@ public final class MatrixMultTestBench extends AbstractTestBench
                 displayFileOpenWarningAlert(logsFileName);
                 e.printStackTrace();
             }
-            
-            ITimer timer = new Timer();
 
             bench.initialize(GPUName);
             bench.warmUp();
@@ -71,10 +66,8 @@ public final class MatrixMultTestBench extends AbstractTestBench
                 }
             };
 
-            timer.start();
             thread.start();
             thread.join();
-            long elapsed = timer.stop();
 
             if (exception != null)
             {
@@ -86,7 +79,7 @@ public final class MatrixMultTestBench extends AbstractTestBench
                 System.getProperty("user.name"),
                 GPUName,
                 "Matrix Multiplication",
-                TimeUnit.toUnit(elapsed, TimeUnit.SEC),
+                bench.getExecutionTimeMs(),
                 -1);
 
             try

@@ -20,7 +20,7 @@ public class CSVLogger implements ILogger
         {
             f.createNewFile();
             fw = new FileWriter(f, true);
-            fw.write("DateTime,User,GPU,Benchmark,Runtime,Score\n");
+            fw.write("DateTime,User,GPU,Benchmark,Runtime(ms),Score\n");
         }
         else
         {
