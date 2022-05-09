@@ -2,14 +2,14 @@ package com.orbix.bench;
 
 import com.aparapi.Kernel;
 import com.aparapi.Range;
-import com.aparapi.device.Device;
+import com.aparapi.device.OpenCLDevice;
 
 /**
  * A benchmark testing the parallelization capabilities of a GPU
  * through a highly parallelizable task, namely matrix
  * multiplication.
  */
-public final class MatrixMultiplicationBenchmark extends AbstractGPUBenchmark
+public final class MatrixMultiplicationBenchmark implements IBenchmark
 {
     private static final int R1 = 10_000;
     private static final int C1_R2 = 10_000;
@@ -38,7 +38,7 @@ public final class MatrixMultiplicationBenchmark extends AbstractGPUBenchmark
     }
 
     private Kernel kernel;
-    private Device GPU;
+    private OpenCLDevice GPU;
 
     /**
      * @param params
@@ -48,7 +48,7 @@ public final class MatrixMultiplicationBenchmark extends AbstractGPUBenchmark
     public void initialize(Object... params)
     {
         kernel = getKernel(R1, C1_R2, C2, a, b, res);
-        GPU = getGPU((String)params[0]);
+        GPU = ((OpenCLDevice)params[0]);
     }
 
     private static Kernel getKernel(final int r1, final int c1_r2, final int c2,

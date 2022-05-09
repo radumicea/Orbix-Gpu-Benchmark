@@ -2,7 +2,7 @@ package com.orbix.bench;
 
 import com.aparapi.Kernel;
 import com.aparapi.Range;
-import com.aparapi.device.Device;
+import com.aparapi.device.OpenCLDevice;
 
 /**
  * A benchmark testing the data transfer capabilities of a GPU.
@@ -15,7 +15,7 @@ import com.aparapi.device.Device;
  * (Now, should it? The dedicated GPU also makes use of shared memory;
  * you could argue it's just that the iGPU is a lot smarter in this regard.)
  */
-public final class DataTransferBenchmark extends AbstractGPUBenchmark
+public final class DataTransferBenchmark implements IBenchmark
 {
     private static final int LOOPS = 100;
     private static final int _512MB = 536_870_912;
@@ -30,7 +30,7 @@ public final class DataTransferBenchmark extends AbstractGPUBenchmark
     }
 
     private Kernel kernel;
-    private Device GPU;
+    private OpenCLDevice GPU;
 
     private boolean running;
     private double executionTime;
@@ -44,7 +44,7 @@ public final class DataTransferBenchmark extends AbstractGPUBenchmark
     {
         running = false;
         kernel = getKernel(BUF, _512MB);
-        GPU = getGPU((String)params[0]);
+        GPU = (OpenCLDevice)params[0];
     }
 
     private static Kernel getKernel(final byte[] arr, final int len)
