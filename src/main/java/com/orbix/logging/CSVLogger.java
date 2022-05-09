@@ -44,7 +44,7 @@ public class CSVLogger implements ILogger
                 "File Write Warning",
                 null,
                 "Can not write to the " + f.getName() +
-                        " file. Will write to the console instead.");
+                    " file. Will write to the console instead.");
             e.printStackTrace();
         }
     }

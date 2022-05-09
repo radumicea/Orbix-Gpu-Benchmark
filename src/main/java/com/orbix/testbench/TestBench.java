@@ -12,8 +12,8 @@ public final class TestBench extends Task<BenchResult>
 {
     private final OpenCLDevice GPU;
     private final Class<? extends IBenchmark>[] benchClasses;
-    IBenchmark bench;
 
+    private IBenchmark bench;
     private Exception exception;
 
     @SafeVarargs
@@ -65,22 +65,32 @@ public final class TestBench extends Task<BenchResult>
             }
 
             String benchName = (benchClasses.length == 1)
-                                ? benchClasses[0].getSimpleName()
-                                : "Standard Benchmark";
+                ? benchClasses[0].getSimpleName()
+                : "Standard Benchmark";
 
+            // TODO: Add score
             return new BenchResult(
-                        Instant.now().toString(),
-                        System.getProperty("user.name"),
-                        GPU.getName(),
-                        benchName,
-                        executionTimeMs,
-                        -1);
+                Instant.now().toString(),
+                System.getProperty("user.name"),
+                GPU.getName(),
+                benchName,
+                executionTimeMs,
+                -1);
         }
-        
         catch (InterruptedException e)
         {
-            bench.cancel();
+            if (bench != null)
+            {
+                bench.cancel();
+            }
             return null;
+        }
+        finally
+        {
+            if (bench != null)
+            {
+                bench.cleanUp();
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ import com.aparapi.device.OpenCLDevice;
  */
 public final class MatrixMultiplicationBenchmark implements IBenchmark
 {
+    private static final Object LOCK = new Object();
+    
     private static final int R1 = 10_000;
     private static final int C1_R2 = 10_000;
     private static final int C2 = 10_000;
@@ -37,8 +39,8 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
         }
     }
 
-    private Kernel kernel;
-    private OpenCLDevice GPU;
+    private static Kernel kernel;
+    private static OpenCLDevice GPU;
 
     /**
      * @param params
@@ -47,8 +49,11 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public void initialize(Object... params)
     {
-        kernel = getKernel(R1, C1_R2, C2, a, b, res);
-        GPU = ((OpenCLDevice)params[0]);
+        synchronized(LOCK)
+        {
+            kernel = getKernel(R1, C1_R2, C2, a, b, res);
+            GPU = (OpenCLDevice)params[0];
+        }
     }
 
     private static Kernel getKernel(final int r1, final int c1_r2, final int c2,
@@ -73,17 +78,20 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public void warmUp() throws Exception
     {
-        kernel.compile(GPU);
-        runHelper(R1 / 40, C1_R2 / 40, C2 / 40);
+        synchronized(LOCK)
+        {
+            kernel.compile(GPU);
+            runHelper(R1 / 40, C1_R2 / 40, C2 / 40);
+        }
     }
 
     @Override
     public void run() throws Exception
     {
-        runHelper(R1, C1_R2, C2);
+        synchronized(LOCK) { runHelper(R1, C1_R2, C2); }
     }
 
-    private void runHelper(int r1, int c1_r2, int c2) throws Exception
+    private static void runHelper(int r1, int c1_r2, int c2) throws Exception
     {
         int maxGroupSize = kernel.getKernelMaxWorkGroupSize(GPU);
         // MUST BE A FACTOR OF groupSize!!!
@@ -97,7 +105,11 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public double getExecutionTimeMs()
     {
-        return kernel.getProfileReportLastThread(GPU).get().getExecutionTime();
+        synchronized(LOCK)
+        {
+            return kernel.getProfileReportLastThread(GPU)
+                         .get().getExecutionTime();
+        }
     }
 
     /**
@@ -107,12 +119,18 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public void cancel()
     {
-        kernel.cancelMultiPass();
+        synchronized(LOCK)
+        {
+            kernel.cancelMultiPass();
+        }
     }
 
     @Override
     public void cleanUp()
     {
-        kernel.dispose();
+        synchronized(LOCK)
+        {
+            kernel.dispose();
+        }
     }
 }

@@ -104,12 +104,15 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                     break;
                 }
 
+                // TODO: Add std
                 default:
+                {
                     AlertDisplayer.displayError(
                         "Not Implemented Error",
                         null,
                         "The selected method is not yet implemented!");
                     return;
+                }
             }
             
         }
@@ -119,7 +122,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 "Error",
                 null,
                 "There was an error running the benchmark. " + 
-                            "Check the console for more information.");
+                    "Check the console for more information.");
             e.printStackTrace();
         }
     }
@@ -139,7 +142,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 "File Open Warning",
                 null,
                 "Can not open the " + logsFileName +
-                        " file. Will write to the console instead.");
+                    " file. Will write to the console instead.");
             e.printStackTrace();
         }
 
@@ -176,7 +179,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 "Error",
                 null,
                 "There was an error running the benchmark. " + 
-                            "Check the console for more information.");
+                    "Check the console for more information.");
             log.close();
 
             running = false;

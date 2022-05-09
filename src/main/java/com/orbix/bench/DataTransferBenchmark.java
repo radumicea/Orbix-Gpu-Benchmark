@@ -17,23 +17,24 @@ import com.aparapi.device.OpenCLDevice;
  */
 public final class DataTransferBenchmark implements IBenchmark
 {
+    private static final Object LOCK = new Object();
+
     private static final int LOOPS = 100;
     private static final int _512MB = 536_870_912;
-    private static final byte[] BUF;
+    private static final byte[] BUF = new byte[_512MB];
     static
     {
-        BUF = new byte[_512MB];
         for (int i = 0; i < _512MB; i++)
         {
             BUF[i] = (byte)i;
         }
     }
 
-    private Kernel kernel;
-    private OpenCLDevice GPU;
+    private static Kernel kernel;
+    private static OpenCLDevice GPU;
 
-    private boolean running;
-    private double executionTime;
+    private static boolean running;
+    private static double executionTime;
 
     /**
      * @param params
@@ -42,9 +43,11 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public void initialize(Object... params)
     {
-        running = false;
-        kernel = getKernel(BUF, _512MB);
-        GPU = (OpenCLDevice)params[0];
+        synchronized(LOCK)
+        {
+            kernel = getKernel(BUF, _512MB);
+            GPU = (OpenCLDevice)params[0];
+        }
     }
 
     private static Kernel getKernel(final byte[] arr, final int len)
@@ -67,19 +70,25 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public void warmUp() throws Exception
     {
-        kernel.compile(GPU);
-        runHelper(LOOPS / 5, true);
+        synchronized(LOCK)
+        {
+            kernel.compile(GPU);
+            runHelper(LOOPS / 5, true);
+        }
     }
 
     @Override
     public void run() throws Exception
     {
-        running = true;
-        executionTime = 0;
-        runHelper(LOOPS, false);
+        synchronized(LOCK)
+        {
+            running = true;
+            executionTime = 0;
+            runHelper(LOOPS, false);
+        }
     }
 
-    private void runHelper(int loops, boolean warmup) throws Exception
+    private static void runHelper(int loops, boolean warmup) throws Exception
     {
         int groupSize = kernel.getKernelPreferredWorkGroupSizeMultiple(GPU);
         // Range should be 0 because we don't have to do a specific
@@ -103,20 +112,29 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public double getExecutionTimeMs()
     {
-        return executionTime;
+        synchronized(LOCK)
+        {
+            return executionTime;
+        }
     }
 
     @Override
     public void cancel()
     {
-        running = false;
+        synchronized(LOCK)
+        {
+            running = false;
+        }
     }
 
     @Override
     public void cleanUp()
     {
-        running = false;
-        kernel.dispose();
-        executionTime = 0;
+        synchronized(LOCK)
+        {
+            running = false;
+            kernel.dispose();
+            executionTime = 0;
+        }
     }
 }
