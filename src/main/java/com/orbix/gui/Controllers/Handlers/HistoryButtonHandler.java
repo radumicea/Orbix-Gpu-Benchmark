@@ -32,7 +32,7 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent>
         {
             Desktop.getDesktop().open(new File(logsFileName + ".csv"));
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             displayFileOpenErrorAlert(logsFileName);
             e.printStackTrace();
