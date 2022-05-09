@@ -13,7 +13,7 @@ import com.aparapi.device.Device;
  * IT SHOULD BE HEAVILY PENALIZED WHEN COMPUTING THE SCORE BASED
  * ON THIS BENCHMARK.
  * (Now, should it? The dedicated GPU also makes use of shared memory;
- * maybe it's just that the iGPU is a lot smarter in this regard.)
+ * you could argue it's just that the iGPU is a lot smarter in this regard.)
  */
 public final class DataTransferBenchmark extends AbstractGPUBenchmark
 {
