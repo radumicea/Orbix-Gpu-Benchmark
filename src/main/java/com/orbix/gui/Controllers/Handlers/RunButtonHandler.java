@@ -80,50 +80,45 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             return;
         }
 
-        try
+        switch (benchMethod)
         {
-            switch (benchMethod)
+            case MatrixMultiplication:
             {
-                case MatrixMultiplication:
-                {
-                    log = getCSVLogger(logsFileName);
-                    testBench = new TestBench(GPU,
-                        MatrixMultiplicationBenchmark.class);
-                    setTestBench(log);
-                    new Thread(testBench).start();
-                    break;
-                }
-
-                case DataTransfer:
-                {
-                    log = getCSVLogger(logsFileName);
-                    testBench = new TestBench(GPU,
-                        DataTransferBenchmark.class);
-                    setTestBench(log);
-                    new Thread(testBench).start();
-                    break;
-                }
-
-                // TODO: Add std
-                default:
-                {
-                    AlertDisplayer.displayError(
-                        "Not Implemented Error",
-                        null,
-                        "The selected method is not yet implemented!");
-                    return;
-                }
+                log = getCSVLogger(logsFileName);
+                testBench = new TestBench(GPU,
+                    MatrixMultiplicationBenchmark.class);
+                setTestBench(log);
+                Thread t = new Thread(testBench);
+                t.setDaemon(true);
+                t.start();
+                break;
             }
-            
-        }
-        catch (Exception e)
-        {
-            AlertDisplayer.displayError(
-                "Error",
-                null,
-                "There was an error running the benchmark. " + 
-                    "Check the console for more information.");
-            e.printStackTrace();
+
+            case DataTransfer:
+            {
+                log = getCSVLogger(logsFileName);
+                testBench = new TestBench(GPU,
+                    DataTransferBenchmark.class);
+                setTestBench(log);
+                Thread t = new Thread(testBench);
+                t.setDaemon(true);
+                t.start();
+                break;
+            }
+
+            // TODO: Add std, use enums instead of passing class
+            // class array only in testbench, len == 1 if non-std
+            // len == nr_benches is std
+            // here: case std: log = dblogger
+            //       case default: log = csvlogger
+            default:
+            {
+                AlertDisplayer.displayError(
+                    "Not Implemented Error",
+                    null,
+                    "The selected method is not yet implemented!");
+                return;
+            }
         }
     }
 

@@ -7,6 +7,11 @@ import com.orbix.logging.BenchResult;
 import javafx.concurrent.Task;
 
 import java.time.Instant;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 public final class TestBench extends Task<BenchResult>
 {
@@ -14,7 +19,6 @@ public final class TestBench extends Task<BenchResult>
     private final Class<? extends IBenchmark>[] benchClasses;
 
     private IBenchmark bench;
-    private Exception exception;
 
     @SafeVarargs
     public TestBench(OpenCLDevice GPU, Class<? extends IBenchmark>... benchClasses)
@@ -36,34 +40,41 @@ public final class TestBench extends Task<BenchResult>
                 bench.initialize(GPU);
                 bench.warmUp();
 
-                Thread thread = new Thread()
+                Callable<Void> benchRunTask = new Callable<Void>()
                 {
                     @Override
-                    public void run()
+                    public Void call() throws Exception
                     {
-                        try
-                        {
-                            bench.run();
-                        }
-                        catch (Exception e)
-                        {
-                            exception = e;
-                        }
+                        bench.run();
+                        return null;
                     }
                 };
 
-                thread.start();
-                thread.join();
+                ExecutorService executorService = Executors.newSingleThreadExecutor(
+                    new ThreadFactory()
+                    {
+                        @Override
+                        public Thread newThread(Runnable r)
+                        {
+                            Thread t = new Thread(r);
+                            t.setDaemon(true);
+                            return t;
+                        }
+                    });
 
-                if (exception != null)
-                {
-                    throw exception;
-                }
-                
+                Future<Void> futureBenchRun = executorService.submit(benchRunTask);
+                while (!futureBenchRun.isDone());
+                futureBenchRun.get();
+
+                executorService.shutdown();
+                while (!executorService.isShutdown());
+
                 executionTimeMs += bench.getExecutionTimeMs();
                 bench.cleanUp();
+                // TODO: bench.cleanUp is finally
             }
 
+            // TODO: benchName based on enum. Properly name them and the benchmark classes
             String benchName = (benchClasses.length == 1)
                 ? benchClasses[0].getSimpleName()
                 : "Standard Benchmark";
