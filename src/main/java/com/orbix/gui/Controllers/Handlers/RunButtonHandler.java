@@ -22,8 +22,8 @@ import javafx.scene.control.ChoiceBox;
 @SuppressWarnings("rawtypes")
 public class RunButtonHandler implements EventHandler<ActionEvent>
 {
-    static volatile Task<BenchResult> testBench;
-    static volatile boolean running;
+    static Task<BenchResult> testBench;
+    static boolean running;
 
     private final ChoiceBox GPULabel;
     private final ChoiceBox methodLabel;

@@ -7,11 +7,6 @@ import com.orbix.logging.BenchResult;
 import javafx.concurrent.Task;
 
 import java.time.Instant;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 
 public final class TestBench extends Task<BenchResult>
 {
@@ -38,40 +33,35 @@ public final class TestBench extends Task<BenchResult>
             {
                 bench = benchClass.getDeclaredConstructor().newInstance();
                 bench.initialize(GPU);
-                bench.warmUp();
-
-                Callable<Void> benchRunTask = new Callable<Void>()
+                
+                try
                 {
-                    @Override
-                    public Void call() throws Exception
-                    {
-                        bench.run();
-                        return null;
-                    }
-                };
+                    bench.warmUp();
 
-                ExecutorService executorService = Executors.newSingleThreadExecutor(
-                    new ThreadFactory()
+                    Thread t = new Thread()
                     {
                         @Override
-                        public Thread newThread(Runnable r)
+                        public void run()
                         {
-                            Thread t = new Thread(r);
-                            t.setDaemon(true);
-                            return t;
+                            bench.run();
                         }
-                    });
+                    };
 
-                Future<Void> futureBenchRun = executorService.submit(benchRunTask);
-                while (!futureBenchRun.isDone());
-                futureBenchRun.get();
+                    t.start();
+                    t.join();
 
-                executorService.shutdown();
-                while (!executorService.isShutdown());
+                    Exception e = bench.getException();
+                    if (e != null)
+                    {
+                        throw e;
+                    }
 
-                executionTimeMs += bench.getExecutionTimeMs();
-                bench.cleanUp();
-                // TODO: bench.cleanUp is finally
+                    executionTimeMs += bench.getExecutionTimeMs();
+                }
+                finally
+                {
+                    bench.cleanUp();
+                }
             }
 
             // TODO: benchName based on enum. Properly name them and the benchmark classes

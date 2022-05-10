@@ -41,6 +41,8 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
 
     private static Kernel kernel;
     private static OpenCLDevice GPU;
+    private static Exception exception;
+    private static boolean didRun;
 
     /**
      * @param params
@@ -53,6 +55,8 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
         {
             kernel = getKernel(R1, C1_R2, C2, a, b, res);
             GPU = (OpenCLDevice)params[0];
+            exception = null;
+            didRun = false;
         }
     }
 
@@ -86,9 +90,27 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     }
 
     @Override
-    public void run() throws Exception
+    public void run()
     {
-        synchronized(LOCK) { runHelper(R1, C1_R2, C2); }
+        synchronized(LOCK)
+        {
+            try
+            {
+                runHelper(R1, C1_R2, C2);
+                didRun = true;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+            finally
+            {
+                if (!didRun)
+                {
+                    exception = new Exception("Kernel.run() crashed!");
+                }
+            }
+        }
     }
 
     private static void runHelper(int r1, int c1_r2, int c2) throws Exception
@@ -132,5 +154,11 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
         {
             kernel.dispose();
         }
+    }
+
+    @Override
+    public Exception getException()
+    {
+        return exception;
     }
 }

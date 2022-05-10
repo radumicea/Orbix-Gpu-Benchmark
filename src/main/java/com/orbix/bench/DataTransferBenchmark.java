@@ -35,6 +35,8 @@ public final class DataTransferBenchmark implements IBenchmark
 
     private static boolean running;
     private static double executionTime;
+    private static Exception exception;
+    private static boolean didRun;
 
     /**
      * @param params
@@ -47,6 +49,9 @@ public final class DataTransferBenchmark implements IBenchmark
         {
             kernel = getKernel(BUF, _512MB);
             GPU = (OpenCLDevice)params[0];
+            running = false;
+            exception = null;
+            didRun = false;
         }
     }
 
@@ -78,13 +83,28 @@ public final class DataTransferBenchmark implements IBenchmark
     }
 
     @Override
-    public void run() throws Exception
+    public void run()
     {
         synchronized(LOCK)
         {
             running = true;
             executionTime = 0;
-            runHelper(LOOPS, false);
+            try
+            {
+                runHelper(LOOPS, false);
+                didRun = true;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+            finally
+            {
+                if (!didRun)
+                {
+                    exception = new Exception("Kernel.run() crashed!");
+                }
+            }
         }
     }
 
@@ -132,9 +152,13 @@ public final class DataTransferBenchmark implements IBenchmark
     {
         synchronized(LOCK)
         {
-            running = false;
             kernel.dispose();
-            executionTime = 0;
         }
+    }
+
+    @Override
+    public Exception getException()
+    {
+        return exception;
     }
 }
