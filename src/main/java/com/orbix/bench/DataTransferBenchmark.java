@@ -33,7 +33,7 @@ public final class DataTransferBenchmark implements IBenchmark
     private static Kernel kernel;
     private static OpenCLDevice GPU;
 
-    private static boolean running;
+    private volatile static boolean running;
     private static double executionTime;
     private static Exception exception;
     private static boolean didRun;
