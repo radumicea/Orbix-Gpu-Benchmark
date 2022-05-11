@@ -132,7 +132,10 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public double getExecutionTimeMs()
     {
-        return executionTime;
+        synchronized(LOCK)
+        {
+            return executionTime;
+        }
     }
 
     @Override
@@ -144,12 +147,18 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public void cleanUp()
     {
-        kernel.dispose();
+        synchronized(LOCK)
+        {
+            kernel.dispose();
+        }
     }
 
     @Override
     public Exception getException()
     {
-        return exception;
+        synchronized(LOCK)
+        {
+            return exception;
+        }
     }
 }
