@@ -127,11 +127,8 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public double getExecutionTimeMs()
     {
-        synchronized(LOCK)
-        {
-            return kernel.getProfileReportLastThread(GPU)
-                         .get().getExecutionTime();
-        }
+        return kernel.getProfileReportLastThread(GPU)
+                     .get().getExecutionTime();
     }
 
     /**
@@ -141,19 +138,13 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public void cancel()
     {
-        synchronized(LOCK)
-        {
-            kernel.cancelMultiPass();
-        }
+        kernel.cancelMultiPass();
     }
 
     @Override
     public void cleanUp()
     {
-        synchronized(LOCK)
-        {
-            kernel.dispose();
-        }
+        kernel.dispose();
     }
 
     @Override
