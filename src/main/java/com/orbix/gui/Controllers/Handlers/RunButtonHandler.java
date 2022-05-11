@@ -22,8 +22,7 @@ import javafx.scene.control.ChoiceBox;
 @SuppressWarnings("rawtypes")
 public class RunButtonHandler implements EventHandler<ActionEvent>
 {
-    static Task<BenchResult> testBench;
-    static boolean running;
+    static volatile Task<BenchResult> testBench;
 
     private final ChoiceBox GPULabel;
     private final ChoiceBox methodLabel;
@@ -71,7 +70,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             return;
         }
 
-        if (running)
+        if (testBench != null && testBench.isRunning())
         {
             AlertDisplayer.displayInfo(
                 "Running",
@@ -146,8 +145,6 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
 
     private static void setTestBench(ILogger log)
     {
-        testBench.setOnRunning((r) -> { running = true; });
-
         testBench.setOnSucceeded((s) -> {
             log.write(testBench.getValue());
             AlertDisplayer.displayInfo(
@@ -155,8 +152,6 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 testBench.getValue().getResult(),
                 "Benchmark finished successfully!");
             log.close();
-                
-            running = false;
         });
 
         testBench.setOnCancelled((c) -> {
@@ -165,8 +160,6 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 null,
                 "Benchmark has been cancelled!");
             log.close();
-
-            running = false;
         });
 
         testBench.setOnFailed((f) -> {
@@ -177,7 +170,6 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                     "Check the console for more information.");
             log.close();
 
-            running = false;
             Throwable e = testBench.getException();
             if (e != null)
             {
