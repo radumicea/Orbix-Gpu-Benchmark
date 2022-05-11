@@ -34,34 +34,28 @@ public final class TestBench extends Task<BenchResult>
                 bench = benchClass.getDeclaredConstructor().newInstance();
                 bench.initialize(GPU);
                 
-                try
+                bench.warmUp();
+
+                Thread t = new Thread()
                 {
-                    bench.warmUp();
-
-                    Thread t = new Thread()
+                    @Override
+                    public void run()
                     {
-                        @Override
-                        public void run()
-                        {
-                            bench.run();
-                        }
-                    };
-
-                    t.start();
-                    t.join();
-
-                    Exception e = bench.getException();
-                    if (e != null)
-                    {
-                        throw e;
+                        bench.run();
                     }
+                };
 
-                    executionTimeMs += bench.getExecutionTimeMs();
-                }
-                finally
+                t.start();
+                t.join();
+
+                Exception e = bench.getException();
+                if (e != null)
                 {
-                    bench.cleanUp();
+                    throw e;
                 }
+
+                executionTimeMs += bench.getExecutionTimeMs();
+                bench.cleanUp();
             }
 
             // TODO: benchName based on enum. Properly name them and the benchmark classes
