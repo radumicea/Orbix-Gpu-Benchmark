@@ -78,7 +78,7 @@ public final class DataTransferBenchmark implements IBenchmark
         synchronized(LOCK)
         {
             kernel.compile(GPU);
-            runHelper(LOOPS / 5, true);
+            runHelper(LOOPS / 10, true);
         }
     }
 
