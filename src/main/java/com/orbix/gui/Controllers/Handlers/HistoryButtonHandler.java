@@ -2,6 +2,7 @@ package com.orbix.gui.Controllers.Handlers;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 
 import com.orbix.gui.AlertDisplayer;
 
@@ -23,7 +24,8 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent>
         if (RunButtonHandler.testBench != null && RunButtonHandler.testBench.isRunning())
         {
             AlertDisplayer.displayInfo(
-                "Running", null,
+                "Running",
+                null,
                 "You can't open the history while the benchmark is running.");
             return;
         }
@@ -32,10 +34,11 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent>
         {
             Desktop.getDesktop().open(new File(logsFileName + ".csv"));
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             AlertDisplayer.displayError(
-                "File Open Error", null,
+                "File Open Error",
+                null,
                 "Can not open the " + logsFileName +
                             " file. Check the console for more information.");
             e.printStackTrace();

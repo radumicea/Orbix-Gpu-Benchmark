@@ -3,21 +3,19 @@ package com.orbix.bench;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
+import com.aparapi.exception.CompileFailedException;
 
 /**
  * A benchmark testing the data transfer capabilities of a GPU.
- * <br></br>
- * THE INTEGRATED GPU DOES NOT HAVE ITS OWN MEMORY.
- * IT SIMPLY TAKES A CHUCK FROM THE MAIN MEMORY AND CALLS IT HIS.
- * BECAUSE OF THIS, THE RUNTIME IS EXTREMELY FAST.
- * IT SHOULD BE HEAVILY PENALIZED WHEN COMPUTING THE SCORE BASED
- * ON THIS BENCHMARK.
- * (Now, should it? The dedicated GPU also makes use of shared memory;
- * you could argue it's just that the iGPU is a lot smarter in this regard.)
  */
 public final class DataTransferBenchmark implements IBenchmark
 {
-    private static final int LOOPS = 200;
+    // We want to know the data size
+    // that will be transmitted in 1s
+    private static double EXPECTED_TIME_MS = 1_000;
+    // Admissible error
+    private static double EPSILON = 15 * EXPECTED_TIME_MS / 100;
+
     private static final int _256MB = 268_435_456;
     private static final byte[] BUF = new byte[_256MB];
     static
@@ -31,18 +29,19 @@ public final class DataTransferBenchmark implements IBenchmark
     private Kernel kernel;
     private OpenCLDevice GPU;
 
-    private double executionTime;
-    private boolean didRun;
+    private int loops;
 
     /**
      * @param params
-     * <code>params[0]</code> must be the name of the GPU to be benchmarked.<br></br>
+     * <code>params[0]</code> must be the GPU to be benchmarked.<br></br>
+     * @throws CompileFailedException
      */
     @Override
-    public void initialize(Object... params)
+    public void initialize(Object... params) throws CompileFailedException
     {
         kernel = getKernel(BUF, _256MB);
         GPU = (OpenCLDevice)params[0];
+        kernel.compile(GPU);
     }
 
     private static Kernel getKernel(final byte[] arr, final int len)
@@ -63,12 +62,6 @@ public final class DataTransferBenchmark implements IBenchmark
     }
 
     @Override
-    public void warmUp() throws Exception
-    {
-        kernel.compile(GPU);
-    }
-
-    @Override
     public void run() throws Exception
     {
         int groupSize = kernel.getKernelPreferredWorkGroupSizeMultiple(GPU);
@@ -81,35 +74,28 @@ public final class DataTransferBenchmark implements IBenchmark
         // we specify the group size and have a non-zero multiple of groupSize
         // as localWidth.
         Range range = GPU.createRange(groupSize, groupSize);
-        
-        for (int i = 0; i < LOOPS; i++)
+
+        kernel.execute(range);
+        double executionTime = kernel.getExecutionTime() - kernel.getConversionTime();
+        loops = 1;
+
+        while (EXPECTED_TIME_MS - executionTime > EPSILON)
         {
             kernel.execute(range);
-            executionTime += kernel.getProfileReportLastThread(GPU)
-                                   .get().getExecutionTime();
+            executionTime += kernel.getExecutionTime();
+            loops++;
         }
-        didRun = true;
-    }
 
-    @Override
-    public double getExecutionTimeMs()
-    {
-        return executionTime;
-    }
-
-    @Override
-    public void cleanUp()
-    {
         kernel.dispose();
     }
 
+    /**
+     * return 100 times the nr. of loops s.t.
+     * 512MB * loops is executed in 1s
+     */
     @Override
-    public Error getError()
+    public double getResult()
     {
-        if (!didRun)
-        {
-            throw new Error();
-        }
-        return null;
+        return 100 * loops;
     }
 }

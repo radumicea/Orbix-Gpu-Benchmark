@@ -1,8 +1,8 @@
 package com.orbix.gui.Controllers;
 
-import static com.orbix.gui.Controllers.BenchmarkingMethods.*;
-
 import com.orbix.gui.Controllers.Handlers.*;
+
+import static com.orbix.bench.BenchmarkingMethods.*;
 
 import java.util.stream.Collectors;
 
@@ -37,10 +37,10 @@ public class Controller
                                      .collect(Collectors.toList()));
 
         method_label.getItems()
-                    .addAll(Standard,
-                            DataTransfer,
-                            MatrixMultiplication,
-                            Fractals);
+                    .addAll(StandardBenchmark,
+                            DataTransferBenchmark,
+                            MatrixMultiplicationBenchmark,
+                            FractalsBenchmark);
 
         run_button.setOnAction(new RunButtonHandler(logsFileName, gpu_label, method_label));
         history_button.setOnAction(new HistoryButtonHandler(logsFileName));

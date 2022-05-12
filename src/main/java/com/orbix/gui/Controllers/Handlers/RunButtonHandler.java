@@ -1,16 +1,16 @@
 package com.orbix.gui.Controllers.Handlers;
 
-import com.aparapi.device.OpenCLDevice;
-import com.aparapi.device.Device.TYPE;
-import com.orbix.bench.DataTransferBenchmark;
-import com.orbix.bench.MatrixMultiplicationBenchmark;
+import com.orbix.bench.BenchmarkingMethods;
 import com.orbix.gui.AlertDisplayer;
-import com.orbix.gui.Controllers.BenchmarkingMethods;
 import com.orbix.logging.BenchResult;
-import com.orbix.logging.CSVLogger;
+import com.orbix.logging.FileLogger;
 import com.orbix.logging.ConsoleLogger;
+import com.orbix.logging.DatabaseLogger;
 import com.orbix.logging.ILogger;
 import com.orbix.testbench.TestBench;
+
+import com.aparapi.device.OpenCLDevice;
+import com.aparapi.device.Device.TYPE;
 
 import java.io.IOException;
 
@@ -79,55 +79,42 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                                        .filter(d -> d.getName().equals(GPUName))
                                        .findFirst().get();
 
-        switch (benchMethod)
+        if (benchMethod == BenchmarkingMethods.StandardBenchmark)
         {
-            case MatrixMultiplication:
-            {
-                log = getCSVLogger(logsFileName);
-                testBench = new TestBench(GPU,
-                    MatrixMultiplicationBenchmark.class);
-                setTestBench(log);
-                Thread t = new Thread(testBench);
-                t.setDaemon(true);
-                t.start();
-                break;
-            }
-
-            case DataTransfer:
-            {
-                log = getCSVLogger(logsFileName);
-                testBench = new TestBench(GPU,
-                    DataTransferBenchmark.class);
-                setTestBench(log);
-                Thread t = new Thread(testBench);
-                t.setDaemon(true);
-                t.start();
-                break;
-            }
-
-            // TODO: Add std, use enums instead of passing class
-            // class array only in testbench, len == 1 if non-std
-            // len == nr_benches is std
-            // here: case std: log = dblogger
-            //       case default: log = csvlogger
-            default:
-            {
-                AlertDisplayer.displayError(
-                    "Not Implemented Error",
-                    null,
-                    "The selected method is not yet implemented!");
-                return;
-            }
+            log = getDatabaseLogger();
         }
+        else
+        {
+            log = getCSVLogger();
+        }
+        
+        testBench = new TestBench(GPU, benchMethod);
+        setTestBench();
+        Thread t = new Thread(testBench);
+        t.setDaemon(true);
+        t.start();
     }
 
-    private static ILogger getCSVLogger(String logsFileName)
+    private ILogger getDatabaseLogger()
     {
         ILogger log;
-
         try
         {
-            log = new CSVLogger(logsFileName);
+            log = new DatabaseLogger();
+        }
+        catch (Exception e)
+        {
+            log = getCSVLogger();
+        }
+        return log;
+    }
+
+    private ILogger getCSVLogger()
+    {
+        ILogger log;
+        try
+        {
+            log = new FileLogger(logsFileName);
         }
         catch (IOException e)
         {
@@ -139,11 +126,10 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                     " file. Will write to the console instead.");
             e.printStackTrace();
         }
-
         return log;
     }
 
-    private static void setTestBench(ILogger log)
+    private void setTestBench()
     {
         testBench.setOnSucceeded((s) -> {
             log.write(testBench.getValue());

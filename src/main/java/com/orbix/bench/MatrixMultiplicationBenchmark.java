@@ -11,17 +11,70 @@ import com.aparapi.device.OpenCLDevice;
  */
 public final class MatrixMultiplicationBenchmark implements IBenchmark
 {
-    private static final int R1 = 10_000;
-    private static final int C1_R2 = 10_000;
-    private static final int C2 = 10_000;
+    // We want to know the sizes of the matrices
+    // such that the benchmark will run for 1s
+    private static double EXPECTED_TIME_MS = 1_000;
+    // Admissible error
+    private static double EPSILON = 15 * EXPECTED_TIME_MS / 100;
 
-    private static final byte a[] = new byte[R1 * C1_R2];
-    private static final byte b[] = new byte[C1_R2 * C2];
-    private static final byte res[] = new byte[R1 * C2];
+    // Initial size values
+    private static final int R1 = 256;
+    private static final int C1_R2 = 256;
+    private static final int C2 = 256;
 
-    static
+    // Final size values
+    private int r1;
+    private int c1_r2;
+    private int c2;
+
+    private byte a[];
+    private byte b[];
+    private byte res[];
+
+    private Kernel kernel;
+    private OpenCLDevice GPU;
+
+    /**
+     * @param params
+     * <code>params[0]</code> must be the GPU to be benchmarked.<br></br>
+     */
+    @Override
+    public void initialize(Object... params)
     {
-        int i = 0;
+        GPU = (OpenCLDevice)params[0];
+    }
+
+    @Override
+    public void run() throws Exception
+    {
+        int i = 1;
+        double executionTime;
+
+        do
+        {
+            r1 = R1 * i;
+            c1_r2 = C1_R2 * i;
+            c2 = C2 * i;
+
+            initMatrices();
+            kernel = getKernel(a, b, res, r1, c1_r2, c2);
+            kernel.compile(GPU);
+            runHelper(kernel, GPU, r1, c2);
+            executionTime = kernel.getExecutionTime() - kernel.getConversionTime();
+            kernel.dispose();
+
+            i++;
+
+        } while (EXPECTED_TIME_MS - executionTime > EPSILON);
+    }
+
+    private void initMatrices()
+    {
+        a = new byte[r1 * c1_r2];
+        b = new byte[c1_r2 * c2];
+        res = new byte[r1 * c2];
+
+        int i;
         for (i = 0; i < a.length && i < b.length; i++)
         {
             a[i] = (byte)i;
@@ -37,80 +90,45 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
         }
     }
 
-    private Kernel kernel;
-    private OpenCLDevice GPU;
-    
-    private boolean didRun;
-
-    /**
-     * @param params
-     * <code>params[0]</code> must be the name of the GPU to be benchmarked.<br></br>
-     */
-    @Override
-    public void initialize(Object... params)
-    {
-        kernel = getKernel(R1, C1_R2, C2, a, b, res);
-        GPU = (OpenCLDevice)params[0];
-    }
-
-    private static Kernel getKernel(final int r1, final int c1_r2, final int c2,
-                                    final byte[] a, final byte[] b, final byte[] res)
+    private static Kernel getKernel(final byte[] _a, final byte[] _b, final byte[] _res,
+                                    final int _r1, final int _c1_r2, final int _c2)
     {
         return new Kernel()
         {
+            // O(n^2)
             @Override
             public void run()
             {
                 int i = getGlobalId();
-                int row = i / c2;
-                int col = i % c2;
-                for (int j = 0; j < c1_r2; j++)
+                int row = i / _c2;
+                int col = i % _c2;
+                for (int j = 0; j < _c1_r2; j++)
                 {
-                    res[i] += a[row * c1_r2 + j] * b[j * c2 + col];
+                    _res[i] += _a[row * _c1_r2 + j] * _b[j * _c2 + col];
                 }
             }
         };
     }
 
-    @Override
-    public void warmUp() throws Exception
+    private static void runHelper(Kernel _kernel, OpenCLDevice _GPU,
+                                  int _r1, int _c2) throws Exception
     {
-        kernel.compile(GPU);
-    }
-
-    @Override
-    public void run() throws Exception
-    {
-        int maxGroupSize = kernel.getKernelMaxWorkGroupSize(GPU);
+        int maxGroupSize = _kernel.getKernelMaxWorkGroupSize(_GPU);
         // MUST BE A FACTOR OF groupSize!!!
-        int rangeSize = (int)Math.ceil(R1 * C2 / (float)maxGroupSize) * maxGroupSize;
+        int rangeSize = (int)Math.ceil(_r1 * _c2 / (float)maxGroupSize) * maxGroupSize;
         // There is a bug in aparapi. Must explicitly state the localWidth
         // (a multiple of groupSize) when explicitly selecting a device, otherwise it won't work!
-        Range range = GPU.createRange(rangeSize, maxGroupSize);
-        kernel.execute(range);
-        didRun = true;
+        Range range = _GPU.createRange(rangeSize, maxGroupSize);
+        _kernel.execute(range);
     }
 
+    /**
+     * returns 100 times the size in mb s.t. multiplying two matrices
+     * of this size is executed in {@link MatrixMultiplicationBenchmark#EXPECTED_TIME_MS} ms.
+     */
     @Override
-    public double getExecutionTimeMs()
+    public double getResult()
     {
-        return kernel.getProfileReportLastThread(GPU)
-                     .get().getExecutionTime();
-    }
-
-    @Override
-    public void cleanUp()
-    {
-        kernel.dispose();
-    }
-
-    @Override
-    public Error getError()
-    {
-        if (!didRun)
-        {
-            return new Error();
-        }
-        return null;
+        return 100 * r1 / 1024d * c2 / 1024d;
     }
 }
