@@ -91,7 +91,7 @@ public final class DataTransferBenchmark implements IBenchmark
 
     /**
      * return 100 times the nr. of loops s.t.
-     * 512MB * loops is executed in 1s
+     * 256MB * loops is executed in 1s
      */
     @Override
     public double getResult()
