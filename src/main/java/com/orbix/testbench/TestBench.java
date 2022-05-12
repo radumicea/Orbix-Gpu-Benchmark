@@ -1,21 +1,18 @@
 package com.orbix.testbench;
 
-import com.aparapi.device.OpenCLDevice;
 import com.orbix.bench.IBenchmark;
 import com.orbix.logging.BenchResult;
 
+import java.time.Instant;
+
 import javafx.concurrent.Task;
 
-import java.time.Instant;
+import com.aparapi.device.OpenCLDevice;
 
 public final class TestBench extends Task<BenchResult>
 {
-    private static final Object LOCK = new Object();
-
     private final OpenCLDevice GPU;
     private final Class<? extends IBenchmark>[] benchClasses;
-
-    private IBenchmark bench;
 
     @SafeVarargs
     public TestBench(OpenCLDevice GPU, Class<? extends IBenchmark>... benchClasses)
@@ -25,72 +22,48 @@ public final class TestBench extends Task<BenchResult>
     }
 
     @Override
-    protected BenchResult call() throws Exception
+    protected BenchResult call()
     {
-        synchronized(LOCK)
+        try
         {
-            try
+            double executionTimeMs = 0;
+
+            for (Class<? extends IBenchmark> benchClass : benchClasses)
             {
-                double executionTimeMs = 0;
+                IBenchmark bench = benchClass.getDeclaredConstructor().newInstance();
+                bench.initialize(GPU);
+                bench.warmUp();
+                bench.run();
 
-                for (Class<? extends IBenchmark> benchClass : benchClasses)
+                Error e = bench.getError();
+                if (e != null)
                 {
-                    bench = benchClass.getDeclaredConstructor().newInstance();
-                    bench.initialize(GPU);
-                    
-                    bench.warmUp();
-
-                    Thread t = new Thread()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            bench.run();
-                        }
-                    };
-
-                    t.start();
-                    t.join();
-
-                    Exception e = bench.getException();
-                    if (e != null)
-                    {
-                        throw e;
-                    }
-
-                    executionTimeMs += bench.getExecutionTimeMs();
-                    bench.cleanUp();
+                    throw e;
                 }
 
-                // TODO: benchName based on enum. Properly name them and the benchmark classes
-                String benchName = (benchClasses.length == 1)
-                    ? benchClasses[0].getSimpleName()
-                    : "Standard Benchmark";
+                executionTimeMs += bench.getExecutionTimeMs();
+                bench.cleanUp();
+            }
 
-                // TODO: Add score
-                return new BenchResult(
-                    Instant.now().toString(),
-                    System.getProperty("user.name"),
-                    GPU.getName(),
-                    benchName,
-                    executionTimeMs,
-                    -1);
-            }
-            catch (InterruptedException e)
-            {
-                if (bench != null)
-                {
-                    bench.cancel();
-                }
-                return null;
-            }
-            finally
-            {
-                if (bench != null)
-                {
-                    bench.cleanUp();
-                }
-            }
+            // TODO: benchName based on enum. Properly name them and the benchmark classes
+            String benchName = (benchClasses.length == 1)
+                ? benchClasses[0].getSimpleName()
+                : "Standard Benchmark";
+
+            // TODO: Add score
+            return new BenchResult(
+                Instant.now().toString(),
+                System.getProperty("user.name"),
+                GPU.getName(),
+                benchName,
+                executionTimeMs,
+                -1);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            System.exit(-1);
+            return null;
         }
     }
 }

@@ -65,13 +65,8 @@
                   <Font name="Lucida Console" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="cancel_button" layoutX="101.0" layoutY="290.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="95.0" style="-fx-background-color: #000000;" text="Cancel" textFill="#bb29ff">
-               <font>
-                  <Font name="Lucida Console" size="17.0" />
-               </font>
-            </Button>
             <ChoiceBox fx:id="gpu_label" layoutX="26.0" layoutY="120.0" prefWidth="150.0" />
-            <Button fx:id="history_button" layoutX="235.0" layoutY="290.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="95.0" style="-fx-background-color: #000000;" text="History" textFill="#bb29ff">
+            <Button fx:id="history_button" layoutX="101.0" layoutY="290.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="95.0" style="-fx-background-color: #000000;" text="History" textFill="#bb29ff">
                <font>
                   <Font name="Lucida Console" size="17.0" />
                </font>

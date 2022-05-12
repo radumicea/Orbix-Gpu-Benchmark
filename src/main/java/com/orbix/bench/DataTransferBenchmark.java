@@ -17,26 +17,22 @@ import com.aparapi.device.OpenCLDevice;
  */
 public final class DataTransferBenchmark implements IBenchmark
 {
-    private static final Object LOCK = new Object();
-
-    private static final int LOOPS = 100;
-    private static final int _512MB = 536_870_912;
-    private static final byte[] BUF = new byte[_512MB];
+    private static final int LOOPS = 200;
+    private static final int _256MB = 268_435_456;
+    private static final byte[] BUF = new byte[_256MB];
     static
     {
-        for (int i = 0; i < _512MB; i++)
+        for (int i = 0; i < _256MB; i++)
         {
             BUF[i] = (byte)i;
         }
     }
 
-    private static Kernel kernel;
-    private static OpenCLDevice GPU;
+    private Kernel kernel;
+    private OpenCLDevice GPU;
 
-    private volatile static boolean running;
-    private static double executionTime;
-    private static Exception exception;
-    private static boolean didRun;
+    private double executionTime;
+    private boolean didRun;
 
     /**
      * @param params
@@ -45,14 +41,8 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public void initialize(Object... params)
     {
-        synchronized(LOCK)
-        {
-            kernel = getKernel(BUF, _512MB);
-            GPU = (OpenCLDevice)params[0];
-            running = false;
-            exception = null;
-            didRun = false;
-        }
+        kernel = getKernel(BUF, _256MB);
+        GPU = (OpenCLDevice)params[0];
     }
 
     private static Kernel getKernel(final byte[] arr, final int len)
@@ -75,90 +65,51 @@ public final class DataTransferBenchmark implements IBenchmark
     @Override
     public void warmUp() throws Exception
     {
-        synchronized(LOCK)
-        {
-            kernel.compile(GPU);
-            runHelper(LOOPS / 10, true);
-        }
+        kernel.compile(GPU);
     }
 
     @Override
-    public void run()
-    {
-        synchronized(LOCK)
-        {
-            running = true;
-            executionTime = 0;
-            try
-            {
-                runHelper(LOOPS, false);
-                didRun = true;
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            finally
-            {
-                if (!didRun)
-                {
-                    exception = new Exception("Kernel.run() crashed!");
-                }
-            }
-        }
-    }
-
-    private static void runHelper(int loops, boolean warmup) throws Exception
+    public void run() throws Exception
     {
         int groupSize = kernel.getKernelPreferredWorkGroupSizeMultiple(GPU);
         // Range should be 0 because we don't have to do a specific
         // task in a loop inside kernel.execute. In fact we don't
         // really need to do anything. kernel.execute will load the
-        // entire BUF, loops times into the VRAM and we must measure
+        // entire BUF, LOOPS times into the VRAM and we must measure
         // it's runtime.
         // However, when we execute on a specific device, aparapi requires
         // we specify the group size and have a non-zero multiple of groupSize
         // as localWidth.
         Range range = GPU.createRange(groupSize, groupSize);
         
-        for (int i = 0; i < loops && (running || warmup); i++)
+        for (int i = 0; i < LOOPS; i++)
         {
             kernel.execute(range);
             executionTime += kernel.getProfileReportLastThread(GPU)
                                    .get().getExecutionTime();
         }
+        didRun = true;
     }
 
     @Override
     public double getExecutionTimeMs()
     {
-        synchronized(LOCK)
-        {
-            return executionTime;
-        }
-    }
-
-    @Override
-    public void cancel()
-    {
-        running = false;
+        return executionTime;
     }
 
     @Override
     public void cleanUp()
     {
-        synchronized(LOCK)
-        {
-            kernel.dispose();
-        }
+        kernel.dispose();
     }
 
     @Override
-    public Exception getException()
+    public Error getError()
     {
-        synchronized(LOCK)
+        if (!didRun)
         {
-            return exception;
+            throw new Error();
         }
+        return null;
     }
 }

@@ -1,10 +1,7 @@
 package com.orbix.bench;
 
-import java.util.Random;
-
 public interface IBenchmark
 {
-    Random RANDOM = new Random();
     /**
      * First method that should be used once the benchmark was created.
      * @param params
@@ -18,18 +15,19 @@ public interface IBenchmark
     /**
      * @throws Exception
      */
-    void run();
+    void run() throws Exception;
     /**
      * Returns the execution time in ms.
+     * @throws Exception
      */
     double getExecutionTimeMs();
-    void cancel();
     /**
      * User after <code>run()</code>.
      */
     void cleanUp();
     /**
-     * @return possible exceptions
+     * <b>ONLY USED AFTER <code>run()</code></b>
+     * @return possible Errors
      */
-    Exception getException();
+    Error getError();
 }

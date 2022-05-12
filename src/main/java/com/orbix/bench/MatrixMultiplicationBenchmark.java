@@ -11,8 +11,6 @@ import com.aparapi.device.OpenCLDevice;
  */
 public final class MatrixMultiplicationBenchmark implements IBenchmark
 {
-    private static final Object LOCK = new Object();
-    
     private static final int R1 = 10_000;
     private static final int C1_R2 = 10_000;
     private static final int C2 = 10_000;
@@ -39,10 +37,10 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
         }
     }
 
-    private static Kernel kernel;
-    private static OpenCLDevice GPU;
-    private static Exception exception;
-    private static boolean didRun;
+    private Kernel kernel;
+    private OpenCLDevice GPU;
+    
+    private boolean didRun;
 
     /**
      * @param params
@@ -51,13 +49,8 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public void initialize(Object... params)
     {
-        synchronized(LOCK)
-        {
-            kernel = getKernel(R1, C1_R2, C2, a, b, res);
-            GPU = (OpenCLDevice)params[0];
-            exception = null;
-            didRun = false;
-        }
+        kernel = getKernel(R1, C1_R2, C2, a, b, res);
+        GPU = (OpenCLDevice)params[0];
     }
 
     private static Kernel getKernel(final int r1, final int c1_r2, final int c2,
@@ -82,83 +75,42 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     @Override
     public void warmUp() throws Exception
     {
-        synchronized(LOCK)
-        {
-            kernel.compile(GPU);
-            runHelper(R1 / 40, C1_R2 / 40, C2 / 40);
-        }
+        kernel.compile(GPU);
     }
 
     @Override
-    public void run()
-    {
-        synchronized(LOCK)
-        {
-            try
-            {
-                runHelper(R1, C1_R2, C2);
-                didRun = true;
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            finally
-            {
-                if (!didRun)
-                {
-                    exception = new Exception("Kernel.run() crashed!");
-                }
-            }
-        }
-    }
-
-    private static void runHelper(int r1, int c1_r2, int c2) throws Exception
+    public void run() throws Exception
     {
         int maxGroupSize = kernel.getKernelMaxWorkGroupSize(GPU);
         // MUST BE A FACTOR OF groupSize!!!
-        int rangeSize = (int)Math.ceil(r1 * c2 / (float)maxGroupSize) * maxGroupSize;
+        int rangeSize = (int)Math.ceil(R1 * C2 / (float)maxGroupSize) * maxGroupSize;
         // There is a bug in aparapi. Must explicitly state the localWidth
         // (a multiple of groupSize) when explicitly selecting a device, otherwise it won't work!
         Range range = GPU.createRange(rangeSize, maxGroupSize);
         kernel.execute(range);
+        didRun = true;
     }
 
     @Override
     public double getExecutionTimeMs()
     {
-        synchronized(LOCK)
-        {
-            return kernel.getProfileReportLastThread(GPU)
-                         .get().getExecutionTime();
-        }
-    }
-
-    /**
-     * Will most likely not work properly.
-     * There's nothing we can do about it.
-     */
-    @Override
-    public void cancel()
-    {
-        kernel.cancelMultiPass();
+        return kernel.getProfileReportLastThread(GPU)
+                     .get().getExecutionTime();
     }
 
     @Override
     public void cleanUp()
     {
-        synchronized(LOCK)
-        {
-            kernel.dispose();
-        }
+        kernel.dispose();
     }
 
     @Override
-    public Exception getException()
+    public Error getError()
     {
-        synchronized(LOCK)
+        if (!didRun)
         {
-            return exception;
+            return new Error();
         }
+        return null;
     }
 }

@@ -41,16 +41,17 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
     @Override
     public void handle(ActionEvent event)
     {
+        if (testBench != null && testBench.isRunning())
+        {
+            AlertDisplayer.displayInfo(
+                "Running",
+                null,
+                "The benchmark is already running.");
+            return;
+        }
+
         String GPUName = (String)GPULabel.getSelectionModel()
                                          .getSelectedItem();
-
-        OpenCLDevice GPU = OpenCLDevice.listDevices(TYPE.GPU).stream()
-                                       .filter(d -> d.getName().equals(GPUName))
-                                       .findFirst().get();
-
-        BenchmarkingMethods benchMethod =
-            (BenchmarkingMethods)methodLabel.getSelectionModel()
-                                            .getSelectedItem();
 
         if (GPUName == null)
         {
@@ -61,6 +62,10 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             return;
         }
 
+        BenchmarkingMethods benchMethod =
+            (BenchmarkingMethods)methodLabel.getSelectionModel()
+                                            .getSelectedItem();
+
         if (benchMethod == null)
         {
             AlertDisplayer.displayInfo(
@@ -70,14 +75,9 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
             return;
         }
 
-        if (testBench != null && testBench.isRunning())
-        {
-            AlertDisplayer.displayInfo(
-                "Running",
-                null,
-                "The benchmark is already running.");
-            return;
-        }
+        OpenCLDevice GPU = OpenCLDevice.listDevices(TYPE.GPU).stream()
+                                       .filter(d -> d.getName().equals(GPUName))
+                                       .findFirst().get();
 
         switch (benchMethod)
         {
@@ -152,29 +152,6 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 testBench.getValue().getResult(),
                 "Benchmark finished successfully!");
             log.close();
-        });
-
-        testBench.setOnCancelled((c) -> {
-            AlertDisplayer.displayInfo(
-                "Cancelled",
-                null,
-                "Benchmark has been cancelled!");
-            log.close();
-        });
-
-        testBench.setOnFailed((f) -> {
-            AlertDisplayer.displayError(
-                "Error",
-                null,
-                "There was an error running the benchmark. " + 
-                    "Check the console for more information.");
-            log.close();
-
-            Throwable e = testBench.getException();
-            if (e != null)
-            {
-                e.printStackTrace();
-            }
         });
     }
 }

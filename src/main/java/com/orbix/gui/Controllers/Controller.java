@@ -25,8 +25,6 @@ public class Controller
     @FXML
     private Button run_button;
     @FXML
-    private Button cancel_button;
-    @FXML
     private Button history_button;
 
     @SuppressWarnings("unchecked")
@@ -39,11 +37,12 @@ public class Controller
                                      .collect(Collectors.toList()));
 
         method_label.getItems()
-                    .addAll(StandardBenchmark,
-                            DataTransfer, MatrixMultiplication, Fractals);
+                    .addAll(Standard,
+                            DataTransfer,
+                            MatrixMultiplication,
+                            Fractals);
 
         run_button.setOnAction(new RunButtonHandler(logsFileName, gpu_label, method_label));
-        cancel_button.setOnAction(new CancelButtonHandler());
         history_button.setOnAction(new HistoryButtonHandler(logsFileName));
     }
 }
