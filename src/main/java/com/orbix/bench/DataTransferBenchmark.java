@@ -12,9 +12,9 @@ public final class DataTransferBenchmark implements IBenchmark
 {
     // We want to know the data size
     // that will be transmitted in 1s
-    private static double EXPECTED_TIME_MS = 1_000;
+    private static final double EXPECTED_TIME_MS = 1_000;
     // Admissible error
-    private static double EPSILON = 15 * EXPECTED_TIME_MS / 100;
+    private static final double EPSILON = 10 * EXPECTED_TIME_MS / 100;
 
     private static final int _256MB = 268_435_456;
     private static final byte[] BUF = new byte[_256MB];
@@ -29,7 +29,7 @@ public final class DataTransferBenchmark implements IBenchmark
     private Kernel kernel;
     private OpenCLDevice GPU;
 
-    private int loops;
+    private long loops;
 
     /**
      * @param params
@@ -56,7 +56,7 @@ public final class DataTransferBenchmark implements IBenchmark
             public void run()
             {
                 byte x = arr[0];
-                byte y = arr[arr.length - 1];
+                byte y = arr[len - 1];
             }
         };
     }
@@ -90,12 +90,12 @@ public final class DataTransferBenchmark implements IBenchmark
     }
 
     /**
-     * return 100 times the nr. of loops s.t.
-     * 256MB * loops is executed in 1s
+     * return nr. bytes moved in
+     * {@link DataTransferBenchmark#EXPECTED_TIME_MS} ms.
      */
     @Override
-    public double getResult()
+    public long getResult()
     {
-        return 100 * loops;
+        return _256MB * loops;
     }
 }

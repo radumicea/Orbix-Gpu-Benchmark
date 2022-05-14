@@ -13,9 +13,9 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
 {
     // We want to know the sizes of the matrices
     // such that the benchmark will run for 1s
-    private static double EXPECTED_TIME_MS = 1_000;
+    private static final double EXPECTED_TIME_MS = 1_000;
     // Admissible error
-    private static double EPSILON = 15 * EXPECTED_TIME_MS / 100;
+    private static final double EPSILON = 10 * EXPECTED_TIME_MS / 100;
 
     // Initial size values
     private static final int R1 = 256;
@@ -123,12 +123,13 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     }
 
     /**
-     * returns 100 times the size in mb s.t. multiplying two matrices
-     * of this size is executed in {@link MatrixMultiplicationBenchmark#EXPECTED_TIME_MS} ms.
+     * returns the size in bytes s.t. multiplying two matrices
+     * of this size is executed in
+     * {@link MatrixMultiplicationBenchmark#EXPECTED_TIME_MS} ms.
      */
     @Override
-    public double getResult()
+    public long getResult()
     {
-        return 100 * r1 / 1024d * c2 / 1024d;
+        return r1 * c2;
     }
 }

@@ -8,5 +8,5 @@ public interface IBenchmark
      */
     void initialize(Object... params) throws Exception;
     void run() throws Exception;
-    double getResult();
+    long getResult();
 }

@@ -73,7 +73,7 @@ public final class TestBench extends Task<BenchResult>
                 System.getProperty("user.name"),
                 GPU.getName(),
                 benchMethod.toString(),
-                (int)Math.round(score));
+                Math.round(score));
         }
         catch (Throwable t)
         {
@@ -83,20 +83,20 @@ public final class TestBench extends Task<BenchResult>
         }
     }
 
-    private double getScore(double result, Class<? extends IBenchmark> benchClass)
+    private double getScore(long result, Class<? extends IBenchmark> benchClass)
     {
         switch (benchMethod)
         {
             case StandardBenchmark:
             {
-                // Data transfer is 10%
                 if (benchClass.equals(DataTransferBenchmark.class))
                 {
-                    return result * 0.1;
+                    // Worth 0.025%
+                    return (result / 10_000d) * 0.00025d;
                 }
                 else
                 {
-                    return result * 0.9;
+                    return (result / 10_000d) * 0.99975d;
                 }
             }
             
@@ -106,11 +106,11 @@ public final class TestBench extends Task<BenchResult>
                 // Give pretty result.
                 if (benchClass.equals(DataTransferBenchmark.class))
                 {
-                    return result;
+                    return result / 10_000d;
                 }
                 else
                 {
-                    return result;
+                    return result / 10_000d;
                 }
             }
         }
