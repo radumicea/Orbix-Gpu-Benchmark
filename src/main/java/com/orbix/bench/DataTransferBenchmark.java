@@ -11,8 +11,8 @@ import com.aparapi.exception.CompileFailedException;
 public final class DataTransferBenchmark implements IBenchmark
 {
     // We want to know the data size
-    // that will be transmitted in 1s
-    private static final double EXPECTED_TIME_MS = 1_000;
+    // that will be transmitted in 2s
+    private static final double EXPECTED_TIME_MS = 2_000;
     // Admissible error
     private static final double EPSILON = 10 * EXPECTED_TIME_MS / 100;
 

@@ -39,6 +39,7 @@ public class Controller
         method_label.getItems()
                     .addAll(StandardBenchmark,
                             DataTransferBenchmark,
+                            TrigonometryBenchmark,
                             MatrixMultiplicationBenchmark,
                             FractalsBenchmark);
 

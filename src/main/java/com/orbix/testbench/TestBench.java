@@ -4,6 +4,7 @@ import com.orbix.bench.BenchmarkingMethods;
 import com.orbix.bench.DataTransferBenchmark;
 import com.orbix.bench.IBenchmark;
 import com.orbix.bench.MatrixMultiplicationBenchmark;
+import com.orbix.bench.TrigonometryBenchmark;
 import com.orbix.logging.BenchResult;
 
 import java.time.Instant;
@@ -29,9 +30,10 @@ public final class TestBench extends Task<BenchResult>
             case StandardBenchmark:
             {
                 // TODO: Others
-                benchClasses = new Class[2];
+                benchClasses = new Class[3];
                 benchClasses[0] = DataTransferBenchmark.class;
-                benchClasses[1] = MatrixMultiplicationBenchmark.class;
+                benchClasses[1] = TrigonometryBenchmark.class;
+                benchClasses[2] = MatrixMultiplicationBenchmark.class;
                 break;
             }
             default:
@@ -85,34 +87,19 @@ public final class TestBench extends Task<BenchResult>
 
     private double getScore(long result, Class<? extends IBenchmark> benchClass)
     {
-        switch (benchMethod)
+        if (benchClass.equals(DataTransferBenchmark.class))
         {
-            case StandardBenchmark:
-            {
-                if (benchClass.equals(DataTransferBenchmark.class))
-                {
-                    // Worth 0.025%
-                    return (result / 10_000d) * 0.00025d;
-                }
-                else
-                {
-                    return (result / 10_000d) * 0.99975d;
-                }
-            }
-            
-            default:
-            {
-                // If not std, no need to normalize for std.
-                // Give pretty result.
-                if (benchClass.equals(DataTransferBenchmark.class))
-                {
-                    return result / 10_000d;
-                }
-                else
-                {
-                    return result / 10_000d;
-                }
-            }
+            return result / 20_000_000d;
         }
+        else if (benchClass.equals(TrigonometryBenchmark.class))
+        {
+            return result / 300_000d;
+        }
+        else if (benchClass.equals(MatrixMultiplicationBenchmark.class))
+        {
+            return result / 10_000d;
+        }
+
+        return 0;
     }
 }

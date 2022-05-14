@@ -12,8 +12,8 @@ import com.aparapi.device.OpenCLDevice;
 public final class MatrixMultiplicationBenchmark implements IBenchmark
 {
     // We want to know the sizes of the matrices
-    // such that the benchmark will run for 1s
-    private static final double EXPECTED_TIME_MS = 1_000;
+    // such that the benchmark will run for 2s
+    private static final double EXPECTED_TIME_MS = 2_000;
     // Admissible error
     private static final double EPSILON = 10 * EXPECTED_TIME_MS / 100;
 
@@ -115,7 +115,7 @@ public final class MatrixMultiplicationBenchmark implements IBenchmark
     {
         int maxGroupSize = _kernel.getKernelMaxWorkGroupSize(_GPU);
         // MUST BE A FACTOR OF groupSize!!!
-        int rangeSize = (int)Math.ceil(_r1 * _c2 / (float)maxGroupSize) * maxGroupSize;
+        int rangeSize = (int)Math.ceil(_r1 * _c2 / (double)maxGroupSize) * maxGroupSize;
         // There is a bug in aparapi. Must explicitly state the localWidth
         // (a multiple of groupSize) when explicitly selecting a device, otherwise it won't work!
         Range range = _GPU.createRange(rangeSize, maxGroupSize);

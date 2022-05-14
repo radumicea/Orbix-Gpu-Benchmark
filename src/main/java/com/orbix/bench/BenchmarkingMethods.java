@@ -4,6 +4,7 @@ public enum BenchmarkingMethods
 {
     StandardBenchmark,
     DataTransferBenchmark,
+    TrigonometryBenchmark,
     MatrixMultiplicationBenchmark,
     FractalsBenchmark,
 }
