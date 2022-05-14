@@ -22,7 +22,7 @@ public class FileLogger implements ILogger
         {
             f.createNewFile();
             fw = new FileWriter(f, true);
-            fw.write("DateTime,User,GPU,Benchmark,Runtime(ms),Score\n");
+            fw.write("DateTime,User,GPU,Benchmark,Score\n");
         }
         else
         {
