@@ -4,6 +4,7 @@ import com.aparapi.device.OpenCLDevice;
 import com.aparapi.device.Device.TYPE;
 import com.orbix.bench.DataTransferBenchmark;
 import com.orbix.bench.MatrixMultiplicationBenchmark;
+import com.orbix.database.Database;
 import com.orbix.gui.AlertDisplayer;
 import com.orbix.gui.Controllers.BenchmarkingMethods;
 import com.orbix.logging.BenchResult;
@@ -154,6 +155,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
                 "Success",
                 testBench.getValue().getResult(),
                 "Benchmark finished successfully!");
+            Database.insertRecord(testBench.getValue());
             log.close();
                 
             running = false;
