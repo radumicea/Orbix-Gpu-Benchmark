@@ -16,11 +16,11 @@ public class BenchResult
     public final String userName;
     public final String GPUName;
     public final String benchName;
-    public final String runTime;
+    public final double runTime;
     public final int score;
 
     public BenchResult(String utcDateTime, String userName, String GPUName,
-                       String benchName, String runTime, int score)
+                       String benchName, double runTime, int score)
     {
         this.utcDateTime = utcDateTime;
         this.userName = userName;
@@ -40,7 +40,7 @@ public class BenchResult
         "\nUser: " + userName +
         "\nGPU: " + GPUName +
         "\nBenchmark: " + benchName +
-        "\nRuntime: " + runTime +
+        "\nRuntime: " + runTime + "ms"+
         "\nScore: " + score;
     }
 

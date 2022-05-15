@@ -18,10 +18,18 @@ public interface IBenchmark
     /**
      * @throws Exception
      */
-    void run() throws Exception;
+    void run();
+    /**
+     * Returns the execution time in ms.
+     */
+    double getExecutionTimeMs();
     void cancel();
     /**
      * User after <code>run()</code>.
      */
     void cleanUp();
+    /**
+     * @return possible exceptions
+     */
+    Exception getException();
 }

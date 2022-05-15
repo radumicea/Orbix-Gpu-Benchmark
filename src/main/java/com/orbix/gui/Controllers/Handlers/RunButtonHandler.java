@@ -1,25 +1,35 @@
 package com.orbix.gui.Controllers.Handlers;
 
+import com.aparapi.device.OpenCLDevice;
+import com.aparapi.device.Device.TYPE;
+import com.orbix.bench.DataTransferBenchmark;
+import com.orbix.bench.MatrixMultiplicationBenchmark;
+import com.orbix.gui.AlertDisplayer;
 import com.orbix.gui.Controllers.BenchmarkingMethods;
-import com.orbix.testbench.AbstractTestBench;
-import com.orbix.testbench.MatrixMultTestBench;
+import com.orbix.logging.BenchResult;
+import com.orbix.logging.CSVLogger;
+import com.orbix.logging.ConsoleLogger;
+import com.orbix.logging.ILogger;
+import com.orbix.testbench.TestBench;
 
+import java.io.IOException;
+
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Alert.AlertType;
 
 @SuppressWarnings("rawtypes")
 public class RunButtonHandler implements EventHandler<ActionEvent>
 {
-    static volatile AbstractTestBench testBench;
-    static volatile boolean running;
+    static Task<BenchResult> testBench;
+    static boolean running;
 
     private final ChoiceBox GPULabel;
     private final ChoiceBox methodLabel;
     private final String logsFileName;
+
+    private ILogger log;
 
     public RunButtonHandler(String logsFileName, ChoiceBox GPULabel,
                             ChoiceBox methodLabel)
@@ -35,133 +45,144 @@ public class RunButtonHandler implements EventHandler<ActionEvent>
         String GPUName = (String)GPULabel.getSelectionModel()
                                          .getSelectedItem();
 
+        OpenCLDevice GPU = OpenCLDevice.listDevices(TYPE.GPU).stream()
+                                       .filter(d -> d.getName().equals(GPUName))
+                                       .findFirst().get();
+
         BenchmarkingMethods benchMethod =
             (BenchmarkingMethods)methodLabel.getSelectionModel()
                                             .getSelectedItem();
 
         if (GPUName == null)
         {
-            displayNotSelectedAlert(
-                "Please select a GPU first.",
-                "GPU not selected");
+            AlertDisplayer.displayInfo(
+                "GPU Not Selected",
+                null,
+                "Please select a GPU first.");
             return;
         }
 
         if (benchMethod == null)
         {
-            displayNotSelectedAlert(
-                "Please select a benchmarking method first.", "Info");
+            AlertDisplayer.displayInfo(
+                "Benchmark Not Selected",
+                null,
+                "Please select a benchmarking method first.");
             return;
         }
 
         if (running)
         {
-            displayRunningAlert("The benchmark is already running.");
+            AlertDisplayer.displayInfo(
+                "Running",
+                null,
+                "The benchmark is already running.");
             return;
         }
 
-        try
+        switch (benchMethod)
         {
-            switch (benchMethod)
+            case MatrixMultiplication:
             {
-                case MatrixMultiplication:
-                    testBench = new MatrixMultTestBench(logsFileName, GPUName);
-                    setTestBench();
-                    new Thread(testBench).start();
-                    break;
-
-                default:
-                    displayNotImplementedMethod();
-                    return;
+                log = getCSVLogger(logsFileName);
+                testBench = new TestBench(GPU,
+                    MatrixMultiplicationBenchmark.class);
+                setTestBench(log);
+                Thread t = new Thread(testBench);
+                t.setDaemon(true);
+                t.start();
+                break;
             }
-            
-        }
-        catch (Exception e)
-        {
-            displayBenchmarkError();
-            e.printStackTrace();
+
+            case DataTransfer:
+            {
+                log = getCSVLogger(logsFileName);
+                testBench = new TestBench(GPU,
+                    DataTransferBenchmark.class);
+                setTestBench(log);
+                Thread t = new Thread(testBench);
+                t.setDaemon(true);
+                t.start();
+                break;
+            }
+
+            // TODO: Add std, use enums instead of passing class
+            // class array only in testbench, len == 1 if non-std
+            // len == nr_benches is std
+            // here: case std: log = dblogger
+            //       case default: log = csvlogger
+            default:
+            {
+                AlertDisplayer.displayError(
+                    "Not Implemented Error",
+                    null,
+                    "The selected method is not yet implemented!");
+                return;
+            }
         }
     }
 
-    private static void setTestBench()
+    private static ILogger getCSVLogger(String logsFileName)
+    {
+        ILogger log;
+
+        try
+        {
+            log = new CSVLogger(logsFileName);
+        }
+        catch (IOException e)
+        {
+            log = new ConsoleLogger();
+            AlertDisplayer.displayWarning(
+                "File Open Warning",
+                null,
+                "Can not open the " + logsFileName +
+                    " file. Will write to the console instead.");
+            e.printStackTrace();
+        }
+
+        return log;
+    }
+
+    private static void setTestBench(ILogger log)
     {
         testBench.setOnRunning((r) -> { running = true; });
+
         testBench.setOnSucceeded((s) -> {
-            displaySuccessAlert(testBench.getValue().getResult());
+            log.write(testBench.getValue());
+            AlertDisplayer.displayInfo(
+                "Success",
+                testBench.getValue().getResult(),
+                "Benchmark finished successfully!");
+            log.close();
+                
             running = false;
         });
+
         testBench.setOnCancelled((c) -> {
-            displayCancelledAlert();
+            AlertDisplayer.displayInfo(
+                "Cancelled",
+                null,
+                "Benchmark has been cancelled!");
+            log.close();
+
             running = false;
         });
+
         testBench.setOnFailed((f) -> {
-            displayBenchmarkError(); running = false;
+            AlertDisplayer.displayError(
+                "Error",
+                null,
+                "There was an error running the benchmark. " + 
+                    "Check the console for more information.");
+            log.close();
+
+            running = false;
             Throwable e = testBench.getException();
             if (e != null)
             {
                 e.printStackTrace();
             }
         });
-    }
-
-    private static void displayNotSelectedAlert(String message, String title)
-    {
-        Alert a = new Alert(AlertType.INFORMATION,
-                            message,
-                            ButtonType.OK);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.show();
-    }
-
-    static void displayRunningAlert(String message)
-    {
-        Alert a = new Alert(AlertType.INFORMATION,
-                            message,
-                            ButtonType.OK);
-        a.setTitle("Running");
-        a.setHeaderText(null);
-        a.show();
-    }
-
-    private static void displayNotImplementedMethod()
-    {
-        Alert a = new Alert(AlertType.ERROR,
-                            "The selected method is not implemented!",
-                            ButtonType.OK);
-        a.setTitle("Not Implemented Error");
-        a.setHeaderText(null);
-        a.show();
-    }
-
-    private static void displaySuccessAlert(String result)
-    {
-        Alert a = new Alert(AlertType.INFORMATION,
-                            "Benchmark finished successfully!",
-                            ButtonType.OK);
-        a.setTitle("Succes");
-        a.setHeaderText(result);
-        a.show();
-    }
-
-    private static void displayCancelledAlert()
-    {
-        Alert a = new Alert(AlertType.INFORMATION,
-                            "Benchmark has been cancelled!",
-                            ButtonType.OK);
-        a.setTitle("Cancelled");
-        a.setHeaderText(null);
-        a.show();
-    }
-
-    private static void displayBenchmarkError()
-    {
-        Alert a = new Alert(AlertType.ERROR,
-                            "There was an error running the benchmark. " + 
-                            "Check the console for more information.",
-                            ButtonType.OK);
-        a.setTitle("Error");
-        a.setHeaderText(null);
-        a.show();
     }
 }
