@@ -103,9 +103,9 @@ public final class TestBench extends Task<BenchResult> {
   /**
    * {@link DataTransferBenchmark} is worth 5% of the std benchmark score
    * <br></br>
-   * {@link TrigonometryBenchmark} is worth 40% of the std benchmark score
+   * {@link TrigonometryBenchmark} is worth 30% of the std benchmark score
    * <br></br>
-   * {@link MatrixMultiplicationBenchmark} is worth 40% of the std benchmark score
+   * {@link MatrixMultiplicationBenchmark} is worth 50% of the std benchmark score
    * <br></br>
    * {@link FractalsBenchmark} is worth 15% of the std benchmark score
    */
@@ -119,9 +119,9 @@ public final class TestBench extends Task<BenchResult> {
     if (benchClass.equals(DataTransferBenchmark.class)) {
       return score / 100d * 5d;
     } else if (benchClass.equals(TrigonometryBenchmark.class)) {
-      return score / 100d * 40d;
+      return score / 100d * 30d;
     } else if (benchClass.equals(MatrixMultiplicationBenchmark.class)) {
-      return score / 100d * 40d;
+      return score / 100d * 50d;
     } else if (benchClass.equals(FractalsBenchmark.class)) {
       return score / 100d * 15d;
     }
