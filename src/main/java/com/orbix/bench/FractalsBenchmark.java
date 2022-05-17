@@ -40,6 +40,21 @@ public class FractalsBenchmark implements IBenchmark {
 
   @Override
   public void run() throws Exception {
+    // Empirically found to be best
+    int localWidth = 8;
+    int localHeight = 8;
+
+    /** global sizes must be a multiple of local sizes */
+    int globalWidth = (1 + WIDTH / localWidth) * localWidth;
+    int globalHeight = (1 + HEIGHT / localHeight) * localHeight;
+
+    Range range = GPU.createRange2D(
+      globalWidth,
+      globalHeight,
+      localWidth,
+      localHeight
+    );
+
     iterations = 0;
     double executionTime;
 
@@ -50,32 +65,11 @@ public class FractalsBenchmark implements IBenchmark {
         new MandelbrotKernel(iterations, CX1, CY1, CX2, CY2, WIDTH, HEIGHT);
       kernel.compile(GPU);
 
-      runHelper(kernel, GPU, WIDTH, 8, HEIGHT, 8);
+      kernel.execute(range);
 
       executionTime = kernel.getExecutionTime() - kernel.getConversionTime();
       kernel.dispose();
     } while (EXPECTED_TIME_MS - executionTime > EPSILON);
-  }
-
-  private static void runHelper(
-    Kernel _kernel,
-    OpenCLDevice _GPU,
-    int _W,
-    int _localWidth,
-    int _H,
-    int _localHeight
-  ) throws Exception {
-    /** global sizes must be a multiple of local sizes */
-    int globalWidth = (1 + _W / _localWidth) * _localWidth;
-    int globalHeight = (1 + _H / _localHeight) * _localHeight;
-
-    Range range = _GPU.createRange2D(
-      globalWidth,
-      globalHeight,
-      _localWidth,
-      _localHeight
-    );
-    _kernel.execute(range);
   }
 
   /**
