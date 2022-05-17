@@ -3,8 +3,8 @@ package com.orbix.testbench;
 import com.aparapi.device.OpenCLDevice;
 import com.orbix.bench.BenchmarkingMethods;
 import com.orbix.bench.DataTransferBenchmark;
-import com.orbix.bench.IBenchmark;
 import com.orbix.bench.FractalsBenchmark;
+import com.orbix.bench.IBenchmark;
 import com.orbix.bench.MatrixMultiplicationBenchmark;
 import com.orbix.bench.TrigonometryBenchmark;
 import com.orbix.logging.BenchResult;
@@ -81,9 +81,12 @@ public final class TestBench extends Task<BenchResult> {
    * <br></br>
    * 6e-6 {@link DataTransferBenchmark} points<br></br>
    * 446e-6 {@link TrigonometryBenchmark} points<br></br>
-   * 0.013314 {@link MatrixMultiplicationBenchmark} points 
+   * 0.013314 {@link MatrixMultiplicationBenchmark} points
    */
-  private double getNormalizedScore(long result, Class<? extends IBenchmark> benchClass) {
+  private double getNormalizedScore(
+    long result,
+    Class<? extends IBenchmark> benchClass
+  ) {
     if (benchClass.equals(DataTransferBenchmark.class)) {
       return result * 6e-6d;
     } else if (benchClass.equals(TrigonometryBenchmark.class)) {
@@ -96,18 +99,17 @@ public final class TestBench extends Task<BenchResult> {
 
     return 0;
   }
-  
+
   /**
-   * {@link DataTransferBenchmark} is worth 10% of the std benchmark score
+   * {@link DataTransferBenchmark} is worth 5% of the std benchmark score
    * <br></br>
-   * {@link TrigonometryBenchmark} is worth 35% of the std benchmark score
+   * {@link TrigonometryBenchmark} is worth 40% of the std benchmark score
    * <br></br>
-   * {@link MatrixMultiplicationBenchmark} is worth 35% of the std benchmark score
+   * {@link MatrixMultiplicationBenchmark} is worth 40% of the std benchmark score
    * <br></br>
-   * {@link FractalsBenchmark} is worth 20% of the std benchmark score
+   * {@link FractalsBenchmark} is worth 15% of the std benchmark score
    */
   private double getScore(long result, Class<? extends IBenchmark> benchClass) {
-
     double score = getNormalizedScore(result, benchClass);
 
     if (benchMethod != BenchmarkingMethods.StandardBenchmark) {
@@ -115,13 +117,13 @@ public final class TestBench extends Task<BenchResult> {
     }
 
     if (benchClass.equals(DataTransferBenchmark.class)) {
-      return score / 100d * 10d;
+      return score / 100d * 5d;
     } else if (benchClass.equals(TrigonometryBenchmark.class)) {
-      return score / 100d * 35d;
+      return score / 100d * 40d;
     } else if (benchClass.equals(MatrixMultiplicationBenchmark.class)) {
-      return score / 100d * 35d;
+      return score / 100d * 40d;
     } else if (benchClass.equals(FractalsBenchmark.class)) {
-      return score / 100d * 20d;
+      return score / 100d * 15d;
     }
 
     return 0;
