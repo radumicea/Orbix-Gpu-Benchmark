@@ -4,6 +4,7 @@ import com.aparapi.device.OpenCLDevice;
 import com.orbix.bench.BenchmarkingMethods;
 import com.orbix.bench.DataTransferBenchmark;
 import com.orbix.bench.IBenchmark;
+import com.orbix.bench.FractalsBenchmark;
 import com.orbix.bench.MatrixMultiplicationBenchmark;
 import com.orbix.bench.TrigonometryBenchmark;
 import com.orbix.logging.BenchResult;
@@ -24,11 +25,11 @@ public final class TestBench extends Task<BenchResult> {
     switch (benchMethod) {
       case StandardBenchmark:
         {
-          // TODO: Others
-          benchClasses = new Class[3];
+          benchClasses = new Class[4];
           benchClasses[0] = DataTransferBenchmark.class;
           benchClasses[1] = TrigonometryBenchmark.class;
           benchClasses[2] = MatrixMultiplicationBenchmark.class;
+          benchClasses[3] = FractalsBenchmark.class;
           break;
         }
       default:
@@ -60,7 +61,6 @@ public final class TestBench extends Task<BenchResult> {
         score += getScore(bench.getResult(), benchClass);
       }
 
-      // TODO: Add score
       return new BenchResult(
         Instant.now().toString(),
         System.getProperty("user.name"),
@@ -75,13 +75,53 @@ public final class TestBench extends Task<BenchResult> {
     }
   }
 
-  private double getScore(long result, Class<? extends IBenchmark> benchClass) {
+  /**
+   * Using FractalsBenchmark and a Vega RX 8 iGPU as a base, I
+   * found that 1 FractalsBenchmark score point is worth:
+   * <br></br>
+   * 6e-6 {@link DataTransferBenchmark} points<br></br>
+   * 446e-6 {@link TrigonometryBenchmark} points<br></br>
+   * 0.013314 {@link MatrixMultiplicationBenchmark} points 
+   */
+  private double getNormalizedScore(long result, Class<? extends IBenchmark> benchClass) {
     if (benchClass.equals(DataTransferBenchmark.class)) {
-      return result / 20_000_000d;
+      return result * 6e-6d;
     } else if (benchClass.equals(TrigonometryBenchmark.class)) {
-      return result / 300_000d;
+      return result * 446e-6d;
     } else if (benchClass.equals(MatrixMultiplicationBenchmark.class)) {
-      return result / 10_000d;
+      return result * 0.013314;
+    } else if (benchClass.equals(FractalsBenchmark.class)) {
+      return result;
+    }
+
+    return 0;
+  }
+  
+  /**
+   * {@link DataTransferBenchmark} is worth 10% of the std benchmark score
+   * <br></br>
+   * {@link TrigonometryBenchmark} is worth 35% of the std benchmark score
+   * <br></br>
+   * {@link MatrixMultiplicationBenchmark} is worth 35% of the std benchmark score
+   * <br></br>
+   * {@link FractalsBenchmark} is worth 20% of the std benchmark score
+   */
+  private double getScore(long result, Class<? extends IBenchmark> benchClass) {
+
+    double score = getNormalizedScore(result, benchClass);
+
+    if (benchMethod != BenchmarkingMethods.StandardBenchmark) {
+      return score;
+    }
+
+    if (benchClass.equals(DataTransferBenchmark.class)) {
+      return score / 100d * 10d;
+    } else if (benchClass.equals(TrigonometryBenchmark.class)) {
+      return score / 100d * 35d;
+    } else if (benchClass.equals(MatrixMultiplicationBenchmark.class)) {
+      return score / 100d * 35d;
+    } else if (benchClass.equals(FractalsBenchmark.class)) {
+      return score / 100d * 20d;
     }
 
     return 0;
