@@ -2,6 +2,7 @@ package com.orbix.gui.controllers.handlers;
 
 import com.aparapi.device.Device.TYPE;
 import com.aparapi.device.OpenCLDevice;
+import com.mongodb.MongoException;
 import com.orbix.bench.BenchmarkingMethods;
 import com.orbix.gui.AlertDisplayer;
 import com.orbix.logging.BenchResult;
@@ -92,17 +93,35 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
     t.start();
   }
 
-  private ILogger getDatabaseLogger() {
+  private ILogger getDatabaseLogger(){
     ILogger log;
     try {
       log = new DatabaseLogger();
-    } catch (Exception e) {
+    }
+    catch (MongoException mongoException)
+    {
       AlertDisplayer.displayWarning(
               "File Write Warning",
               null,
               "Cannot connect to the MongoDB server. Will write to the file logger instead."
       );
-      log = getCSVLogger();
+      try {
+        log = new FileLogger(logsFileName);
+      }
+      catch (IOException e)
+      {
+
+        log = new ConsoleLogger();
+        AlertDisplayer.displayWarning(
+                "File Open Warning",
+                null,
+                "Can not open the " +
+                        logsFileName +
+                        " file. Will write to the console instead."
+        );
+        e.printStackTrace();
+      }
+      mongoException.printStackTrace();
     }
     return log;
   }
