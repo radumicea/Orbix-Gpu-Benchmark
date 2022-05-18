@@ -80,11 +80,8 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
       .findFirst()
       .get();
 
-    if (benchMethod == BenchmarkingMethods.StandardBenchmark) {
+    if (benchMethod == BenchmarkingMethods.StandardBenchmark)
       log = getDatabaseLogger();
-    } else {
-      log = getCSVLogger();
-    }
 
     testBench = new TestBench(GPU, benchMethod);
     setTestBench();
@@ -110,7 +107,6 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
       }
       catch (IOException e)
       {
-
         log = new ConsoleLogger();
         AlertDisplayer.displayWarning(
                 "File Open Warning",
