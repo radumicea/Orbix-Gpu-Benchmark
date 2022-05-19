@@ -26,23 +26,23 @@ import javafx.stage.Stage;
 
 
 
-public class HistoryController{
+public class HistoryController implements Initializable{
 
     @FXML
     private Button close;
 
     @FXML
-    private TableView<BenchResult> table;
+    private TableView<Database> table;
     @FXML
-    private TableColumn<BenchResult,String> time;
+    private TableColumn<Database,String> time;
     @FXML
-    private TableColumn<BenchResult,String> user;
+    private TableColumn<Database,String> user;
     @FXML
-    private TableColumn<BenchResult,String> gpu;
+    private TableColumn<Database,String> gpu;
     @FXML
-    private TableColumn<BenchResult,String> bench;
+    private TableColumn<Database,String> bench;
     @FXML
-    private TableColumn<BenchResult,Long> score;
+    private TableColumn<Database,Long> score;
 
     //BenchResult benchresult;
 
@@ -51,22 +51,33 @@ public class HistoryController{
         this.benchresult=benchresult;
     }*/
 
-    //public void initialize(URL url, ResourceBundle resourceBundle) {
-        //Database d1= new Database();
-        //d1.setName("name1");
-        //d1.setTime(12);
-        //d1.setGpu("gpu1");
-        /*ObservableList<BenchResult> list = FXCollections.observableArrayList(benchresult);
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        Database d1= new Database();
+        //Database d2= new Database();
+        d1.setName("name1");
+        d1.setGpu("ssss");
+        d1.setTime("123");
+        d1.setBench("gpu1");
+        d1.setScore(123L);
 
-        time.setCellValueFactory(new PropertyValueFactory<BenchResult,String>("time"));
-        user.setCellValueFactory(new PropertyValueFactory<BenchResult,String>("user"));
-        gpu.setCellValueFactory(new PropertyValueFactory<BenchResult,String>("gpu"));
-        bench.setCellValueFactory(new PropertyValueFactory<BenchResult,String>("bench"));
-        score.setCellValueFactory(new PropertyValueFactory<BenchResult,Long>("score"));
+        /*d2.setName("name2");
+        d2.setGpu("ssss");
+        d2.setTime("123");
+        d2.setBench("gpu2");
+        d2.setScore(123L);*/
+
+        //d1.setGpu("gpu1");
+        ObservableList<Database> list = FXCollections.observableArrayList(d1);
+
+        time.setCellValueFactory(new PropertyValueFactory<Database,String>("time"));
+        user.setCellValueFactory(new PropertyValueFactory<Database,String>("user"));
+        gpu.setCellValueFactory(new PropertyValueFactory<Database,String>("gpu"));
+        bench.setCellValueFactory(new PropertyValueFactory<Database,String>("bench"));
+        score.setCellValueFactory(new PropertyValueFactory<Database,Long>("score"));
 
         table.setItems(list);
     }
-*/
+
     public void closeButtonOnAction(ActionEvent event){
         Stage stage = (Stage)close.getScene().getWindow();
         stage.close();
