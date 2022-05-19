@@ -27,7 +27,7 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
       Stage historyStage = new Stage();
       historyStage.initStyle(StageStyle.UNDECORATED);
       // registerStage.setTitle("Application");
-      historyStage.setScene(new Scene(root, 1000, 750));
+      historyStage.setScene(new Scene(root, 800, 600));
       historyStage.show();
     }catch (Exception e){
       e.printStackTrace();
