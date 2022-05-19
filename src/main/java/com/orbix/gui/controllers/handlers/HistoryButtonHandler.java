@@ -6,6 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class HistoryButtonHandler implements EventHandler<ActionEvent> {
 
@@ -15,6 +20,20 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
     this.logsFileName = logsFileName;
   }
 
+  public void initStage()
+  {
+    try{
+      Parent root = FXMLLoader.load(getClass().getResource("/com/orbix/table.fxml"));
+      Stage historyStage = new Stage();
+      historyStage.initStyle(StageStyle.UNDECORATED);
+      // registerStage.setTitle("Application");
+      historyStage.setScene(new Scene(root, 800, 600));
+      historyStage.show();
+    }catch (Exception e){
+      e.printStackTrace();
+      e.getCause();
+    }
+  }
   @Override
   public void handle(ActionEvent event) {
     if (
@@ -28,7 +47,7 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
       );
       return;
     }
-
+    initStage();
     try {
       Desktop.getDesktop().open(new File(logsFileName + ".csv"));
     } catch (IOException e) {
