@@ -16,7 +16,7 @@
          <children>
             <ImageView fitHeight="613.0" fitWidth="829.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@Artboard%2010.png" />
+                  <Image url="@TableImage.png" />
                </image>
             </ImageView>
             <TableView fx:id="table" layoutX="146.0" layoutY="159.0" prefHeight="357.0" prefWidth="511.0" style="-fx-background-color: #f6eef6;">
