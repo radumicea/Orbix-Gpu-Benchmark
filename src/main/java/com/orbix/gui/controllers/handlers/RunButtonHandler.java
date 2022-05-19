@@ -81,7 +81,13 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
       .get();
 
     if (benchMethod == BenchmarkingMethods.StandardBenchmark)
+    {
       log = getDatabaseLogger();
+    }
+    else
+    {
+      log = getCSVLogger();
+    }
 
     testBench = new TestBench(GPU, benchMethod);
     setTestBench();
