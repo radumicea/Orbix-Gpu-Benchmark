@@ -15,7 +15,7 @@
             <children>
             <ImageView fitHeight="600.0" fitWidth="1008.0" layoutX="-44.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@Artboard%209.png" />
+                  <Image url="@Background.png" />
                </image>
             </ImageView>
             <Label layoutX="272.0" layoutY="12.0" prefHeight="97.0" prefWidth="490.0" text="GPU Benchmark" textFill="#ba8cb9">
