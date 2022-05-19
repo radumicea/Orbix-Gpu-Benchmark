@@ -149,6 +149,7 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
   private void setTestBench() {
     testBench.setOnSucceeded(s -> {
       log.write(testBench.getValue());
+
       AlertDisplayer.displayInfo(
         "Success",
         testBench.getValue().getResult(),

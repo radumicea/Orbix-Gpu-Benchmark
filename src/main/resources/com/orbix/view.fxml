@@ -8,69 +8,43 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="342.0" prefWidth="607.0" style="-fx-background-color: #29d6b8; -fx-border-color: #E24460;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orbix.gui.controllers.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #29d6b8; -fx-border-color: #E24460;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orbix.gui.controllers.Controller">
     <left>
-        <AnchorPane prefHeight="400.0" prefWidth="290.0" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="598.0" prefWidth="809.0" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="342.0" fitWidth="607.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@background.png" />
-                    </image>
-                </ImageView>
-            <Text fill="#7b3299" layoutX="547.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="O" textAlignment="CENTER" wrappingWidth="29.33660888671875">
+            <ImageView fitHeight="600.0" fitWidth="1008.0" layoutX="-44.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Artboard%209.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="272.0" layoutY="12.0" prefHeight="97.0" prefWidth="490.0" text="GPU Benchmark" textFill="#ba8cb9">
                <font>
-                  <Font name="Lucida Console" size="38.0" />
-               </font>
-            </Text>
-            <Text fill="#7b3299" layoutX="546.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="R" textAlignment="CENTER" wrappingWidth="32.53668212890625">
-               <font>
-                  <Font name="Lucida Console" size="38.0" />
-               </font>
-            </Text>
-            <Label layoutX="34.0" layoutY="21.0" prefHeight="54.0" prefWidth="312.0" text="GPU Benchmark" textFill="#7b3299">
-               <font>
-                  <Font name="Lucida Console" size="30.0" />
+                  <Font name="Axiforma-Light" size="59.0" />
                </font>
             </Label>
-            <Text fill="#7b3299" layoutX="546.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="I" textAlignment="CENTER" wrappingWidth="32.53668212890625">
+            <Label layoutX="450.0" layoutY="137.0" prefHeight="20.0" prefWidth="235.0" text="GPU" textFill="WHITE">
                <font>
-                  <Font name="Lucida Console" size="38.0" />
-               </font>
-            </Text>
-            <Text fill="#7b3299" layoutX="546.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="B" textAlignment="CENTER" wrappingWidth="32.53668212890625">
-               <font>
-                  <Font name="Lucida Console" size="38.0" />
-               </font>
-            </Text>
-            <Text fill="#7b3299" layoutX="546.0" layoutY="275.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X" textAlignment="CENTER" wrappingWidth="32.53668212890625">
-               <font>
-                  <Font name="Lucida Console" size="38.0" />
-               </font>
-            </Text>
-            <Label layoutX="26.0" layoutY="91.0" prefHeight="20.0" prefWidth="235.0" text="GPU" textFill="#6fa4cc">
-               <font>
-                  <Font name="Lucida Console" size="18.0" />
+                  <Font name="Axiforma-Light" size="34.0" />
                </font>
             </Label>
-            <Label layoutX="26.0" layoutY="171.0" prefHeight="20.0" prefWidth="235.0" text="Method" textFill="#6fa4cc">
-               <font>
-                  <Font name="Lucida Console" size="18.0" />
-               </font>
-            </Label>
-            <ChoiceBox fx:id="method_label" layoutX="26.0" layoutY="202.0" prefWidth="150.0" />
-            <Button fx:id="run_button" layoutX="5.0" layoutY="290.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="58.0" style="-fx-background-color: #000000;" text="Run" textFill="#bb29ff">
+            <ChoiceBox fx:id="method_label" layoutX="447.0" layoutY="343.0" prefHeight="47.0" prefWidth="276.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.55; -fx-border-color: ffffff;" />
+            <Button fx:id="run_button" layoutX="602.0" layoutY="511.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="122.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.45; -fx-border-color: ffffff;" text="Run" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Lucida Console" size="18.0" />
                </font>
             </Button>
-            <ChoiceBox fx:id="gpu_label" layoutX="26.0" layoutY="120.0" prefWidth="150.0" />
-            <Button fx:id="history_button" layoutX="101.0" layoutY="290.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="95.0" style="-fx-background-color: #000000;" text="History" textFill="#bb29ff">
+            <ChoiceBox fx:id="gpu_label" layoutX="451.0" layoutY="189.0" prefHeight="43.0" prefWidth="272.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.55; -fx-border-color: ffffff;" />
+            <Button fx:id="history_button" layoutX="442.0" layoutY="510.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="135.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.45; -fx-border-color: ffffff;" text="History" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Lucida Console" size="17.0" />
                </font>
             </Button>
+            <Label layoutX="448.0" layoutY="291.0" prefHeight="42.0" prefWidth="235.0" text="Method" textFill="WHITE">
+               <font>
+                  <Font name="Axiforma-Light" size="34.0" />
+               </font>
+            </Label>
             </children>
         </AnchorPane>
     </left>

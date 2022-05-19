@@ -1,18 +1,39 @@
 package com.orbix.gui.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Map;
+
 public class Database {
-    private String name;
+
+    private String user;
     private String gpu;
     private String time;
     private String bench;
     private Long score;
 
-    public String getName() {
-        return name;
+   /* public Database() throws IOException
+    {
+        /*final ObjectMapper objectMapper = new ObjectMapper();
+        ArrayList<Database> rec = objectMapper.readValue(
+                new File("records.json"),
+                new TypeReference<ArrayList<Database>>() {
+                });
+
+        rec.forEach(x -> System.out.println(x.toString()));*/
+
+
+    public String getUser() {
+        return user;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getGpu() {

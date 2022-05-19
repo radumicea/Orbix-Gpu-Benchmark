@@ -13,7 +13,7 @@ public class GUI extends Application {
     FXMLLoader fxmlLoader = new FXMLLoader(
       GUI.class.getResource("/com/orbix/view.fxml")
     );
-    Scene scene = new Scene(fxmlLoader.load(), 607, 342);
+    Scene scene = new Scene(fxmlLoader.load(), 800, 600);
     stage.setResizable(false);
     stage.setTitle("ORBIX");
     stage.setScene(scene);
