@@ -1,15 +1,50 @@
 package com.orbix.database;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
+public class Database {
 
-public final class Database {
-  private static final String uri = "mongodb+srv://orbixMember:orbixTeam@cluster0.fma2x.mongodb.net/test";
-  public static MongoClient mongoClient;
-  public static MongoDatabase database;
+    private String user;
+    private String gpu;
+    private String time;
+    private String bench;
+    private Long score;
 
-  private Database(){
+    public String getUser() {
+        return user;
+    }
 
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getGpu() {
+        return gpu;
+    }
+
+    public void setGpu(String gpu) {
+        this.gpu = gpu;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getBench() {
+        return bench;
+    }
+
+    public void setBench(String bench) {
+        this.bench = bench;
+    }
+
+    public Long getScore() {
+        return score;
+    }
+
+    public void setScore(Long score) {
+        this.score = score;
+    }
 }

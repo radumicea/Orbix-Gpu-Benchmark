@@ -1,6 +1,7 @@
 package com.orbix.gui.controllers;
 
 import static com.orbix.bench.BenchmarkingMethods.*;
+import static com.orbix.database.HistoryTypes.*;
 
 import com.aparapi.device.Device.TYPE;
 import com.aparapi.device.OpenCLDevice;
@@ -27,6 +28,9 @@ public class Controller {
   @FXML
   private Button history_button;
 
+  @FXML
+  private ChoiceBox history_label;
+
   @SuppressWarnings("unchecked")
   public void initialize() {
     gpu_label
@@ -49,9 +53,20 @@ public class Controller {
         FractalsBenchmark
       );
 
+    history_label
+      .getItems()
+      .addAll(
+              LocalHistory,
+              GlobalHistory
+      );
+
     run_button.setOnAction(
       new RunButtonHandler(logsFileName, gpu_label, method_label)
     );
-    history_button.setOnAction(new HistoryButtonHandler(logsFileName));
+
+    history_button.setOnAction(
+      new HistoryButtonHandler(logsFileName, history_label)
+    );
+
   }
 }

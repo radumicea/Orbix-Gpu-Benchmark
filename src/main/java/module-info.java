@@ -14,4 +14,5 @@ module com.orbix {
   opens com.orbix.bench to aparapi;
   opens com.orbix.logging to com.fasterxml.jackson.databind;
   exports com.orbix ;
+  opens com.orbix.database to aparapi, javafx.base, javafx.fxml;
 }
