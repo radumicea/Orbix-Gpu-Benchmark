@@ -51,14 +51,15 @@ public class Database {
     }
 
 
-    //@Override
-    public boolean equalElement(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+
+    public boolean equalsElement(Object o) {
+        //if (this == o) return true;
+        //if (o == null || getClass() != o.getClass()) return false;
         //String toCompare= new Stri
         //return Objects.equals(user, toCompare) || Objects.equals(gpu, toCompare) || Objects.eq
         String toCompare= (String)o;
-        return toCompare.equals(getGpu());
+        return (this.user.equals(toCompare) || this.gpu.equals(toCompare)
+                || this.bench.equals(toCompare) || String.valueOf(this.score).equals(toCompare));
     }
 
     @Override

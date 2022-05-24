@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 
 
 
-public class HistoryController{
+public class HistoryController implements Initializable{
 
     @FXML
     private Button close;
@@ -47,36 +47,39 @@ public class HistoryController{
     private Button searchButton;
 
     private static String searchedElement;
+    private ArrayList<Database> arr;
+    private ObservableList<Database> list;
 
-    public void initialize2() throws MongoException {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) throws  MongoException{
+
         DatabaseParser db = new DatabaseParser();
-        ArrayList<Database> arr;
+
         arr = db.parseAscending();
         db.close();
-        //ArrayList<Database> arr;
-        ArrayList<Database> search = new ArrayList<Database>();
-        //search.add(arr.get(arr.indexOf("timea")));
 
-        //System.out.println(searchedElement);
-        for(Database datab: arr)
-        {
-            if(datab.getUser().equals(searchedElement)) search.add(datab);
-        }
-        ObservableList<Database> list;
-        if(searchedElement==null)
-        {
-            list = FXCollections.observableArrayList(arr);
-        }
-        else
-        {
-            list = FXCollections.observableArrayList(search);
-        }
+        list = FXCollections.observableArrayList(arr);
+
+
         time.setCellValueFactory(new PropertyValueFactory<Database,String>("time"));
         user.setCellValueFactory(new PropertyValueFactory<Database,String>("user"));
         gpu.setCellValueFactory(new PropertyValueFactory<Database,String>("gpu"));
         bench.setCellValueFactory(new PropertyValueFactory<Database,String>("bench"));
         score.setCellValueFactory(new PropertyValueFactory<Database,Long>("score"));
 
+        table.setItems(list);
+    }
+
+    public void search()
+    {
+        ArrayList<Database> search = new ArrayList<Database>();
+
+        for(Database datab: arr)
+        {
+            if(datab.equalsElement(searchedElement)) search.add(datab);
+        }
+
+        list = FXCollections.observableArrayList(search);
         table.setItems(list);
     }
 
@@ -87,9 +90,10 @@ public class HistoryController{
 
     public void searchButtonOnAction(ActionEvent event) throws IOException
     {
-        initialize2();
+        //initialize2();
         searchedElement=search.getText();
-        initialize2();
+        search();
+        //initialize2();
 
 
     }

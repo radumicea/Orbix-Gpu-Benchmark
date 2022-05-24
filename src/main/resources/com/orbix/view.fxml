@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -23,34 +24,46 @@
                   <Font name="Axiforma-Light" size="59.0" />
                </font>
             </Label>
-            <Label layoutX="450.0" layoutY="137.0" prefHeight="20.0" prefWidth="235.0" text="GPU" textFill="WHITE">
+            <Label layoutX="450.0" layoutY="124.0" prefHeight="20.0" prefWidth="235.0" text="GPU" textFill="WHITE">
                <font>
-                  <Font name="Axiforma-Light" size="34.0" />
+                  <Font name="Axiforma-Light" size="28.0" />
                </font>
             </Label>
-            <ChoiceBox fx:id="method_label" layoutX="447.0" layoutY="343.0" prefHeight="47.0" prefWidth="276.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.55; -fx-border-color: ffffff;" />
-            <Button fx:id="run_button" layoutX="602.0" layoutY="511.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="122.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.45; -fx-border-color: ffffff;" text="Run" textAlignment="CENTER" textFill="WHITE">
+            <ChoiceBox fx:id="method_label" layoutX="449.0" layoutY="293.0" prefHeight="37.0" prefWidth="272.0" stylesheets="@cssfiles/choicebox.css" />
+            <ChoiceBox fx:id="gpu_label" layoutX="451.0" layoutY="176.0" prefHeight="25.0" prefWidth="272.0" stylesheets="@cssfiles/choicebox.css" />
+            <Button fx:id="history_button" layoutX="627.0" layoutY="461.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="94.0" stylesheets="@cssfiles/button.css" text="History" textAlignment="CENTER" textFill="#120f0f">
                <font>
-                  <Font name="Lucida Console" size="18.0" />
+                  <Font name="Axiforma-Regular" size="17.0" />
                </font>
             </Button>
-            <ChoiceBox fx:id="gpu_label" layoutX="451.0" layoutY="189.0" prefHeight="43.0" prefWidth="272.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.55; -fx-border-color: ffffff;" />
-            <Button fx:id="history_button" layoutX="166.0" layoutY="511.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="135.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.45; -fx-border-color: ffffff;" text="History" textAlignment="CENTER" textFill="WHITE">
+            <Label layoutX="448.0" layoutY="241.0" prefHeight="42.0" prefWidth="235.0" text="Method" textFill="WHITE">
                <font>
-                  <Font name="Lucida Console" size="17.0" />
+                  <Font name="Axiforma-Light" size="28.0" />
+               </font>
+            </Label>
+           <ChoiceBox fx:id="history_label" layoutX="446.0" layoutY="462.0" prefHeight="37.0" prefWidth="166.0" stylesheets="@cssfiles/choicebox.css" />
+            <Label layoutX="444.0" layoutY="410.0" prefHeight="42.0" prefWidth="235.0" text="History" textFill="WHITE">
+               <font>
+                  <Font name="Axiforma-Light" size="28.0" />
+               </font>
+            </Label>
+            <Button fx:id="fractals_button" contentDisplay="CENTER" layoutX="500.0" layoutY="526.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="174.0" stylesheets="@cssfiles/button.css" text="Visualize fractals" textAlignment="CENTER" textFill="#120f0f">
+               <font>
+                  <Font name="Axiforma-Regular" size="17.0" />
                </font>
             </Button>
-            <Label layoutX="448.0" layoutY="291.0" prefHeight="42.0" prefWidth="235.0" text="Method" textFill="WHITE">
+            <Button layoutX="699.0" layoutY="130.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="16.0" style="-fx-background-color: #331c24;" text="i" textAlignment="CENTER" textFill="WHITE">
                <font>
-                  <Font name="Axiforma-Light" size="34.0" />
+                  <Font name="Axiforma-Black" size="14.0" />
                </font>
-            </Label>
-           <ChoiceBox fx:id="history_label" layoutX="340.0" layoutY="511.0" prefHeight="47.0" prefWidth="228.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-opacity: 0.55; -fx-border-color: ffffff;" />
-            <Label layoutX="340.0" layoutY="451.0" prefHeight="42.0" prefWidth="235.0" text="History" textFill="WHITE">
+               <tooltip>
+                  <Tooltip contentDisplay="RIGHT" text="Benchmark use: aaaaaaaaaaaaaaaaaaaaaaaaaaaaa&#10;sssssssssssssssssssssssssssssssssssssssss" />
+               </tooltip></Button>
+            <Button fx:id="run_button" layoutX="500.0" layoutY="354.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="169.0" stylesheets="@cssfiles/button.css" text="Start Benchmark" textAlignment="CENTER" textFill="#120f0f">
                <font>
-                  <Font name="Axiforma-Light" size="34.0" />
+                  <Font name="Axiforma-Regular" size="17.0" />
                </font>
-            </Label>
+            </Button>
             </children>
         </AnchorPane>
     </left>
