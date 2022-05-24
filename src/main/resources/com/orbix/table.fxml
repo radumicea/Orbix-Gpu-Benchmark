@@ -20,27 +20,33 @@
                   <Image url="@TableImage.png" />
                </image>
             </ImageView>
-            <TableView fx:id="table" layoutX="146.0" layoutY="159.0" prefHeight="357.0" prefWidth="511.0" style="-fx-background-color: #f6eef6;">
+            <TableView fx:id="table" editable="true" layoutX="54.0" layoutY="159.0" prefHeight="419.0" prefWidth="733.0" stylesheets="@cssfiles/table.css" tableMenuButtonVisible="true">
               <columns>
-                <TableColumn fx:id="time" prefWidth="103.55563354492188" text="Time" />
-                <TableColumn fx:id="user" prefWidth="75.55558776855469" text="User" />
-                  <TableColumn fx:id="gpu" prefWidth="127.111083984375" text="GPU" />
-                  <TableColumn fx:id="bench" prefWidth="82.88888549804688" text="Benchmark" />
-                  <TableColumn fx:id="score" prefWidth="113.77777099609375" text="Score" />
+                <TableColumn fx:id="time" prefWidth="168.66667556762695" text="Time" />
+                <TableColumn fx:id="user" prefWidth="75.33329772949219" text="User" />
+                  <TableColumn fx:id="gpu" prefWidth="249.1112060546875" text="GPU" />
+                  <TableColumn fx:id="bench" prefWidth="137.3333740234375" text="Benchmark" />
+                  <TableColumn fx:id="score" prefWidth="117.33331298828125" text="Score" />
               </columns>
             </TableView>
-            <Text fill="#ba8cb9" layoutX="326.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="History" wrappingWidth="164.26040649414062">
+            <Text fill="#ba8cb9" layoutX="338.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="History" wrappingWidth="164.26040649414062">
                <font>
                   <Font name="Axiforma-Light" size="39.0" />
                </font>
             </Text>
-            <Button fx:id="close" layoutX="59.0" layoutY="30.0" mnemonicParsing="false" onAction="#closeButtonOnAction" prefHeight="33.0" prefWidth="82.0" style="-fx-background-color: linear-gradient(from 0.0% 50.1577% to 100.0% 52.3659%, #b06489 0.0%, #b06489 11.1857%, #00000000 100.0%); -fx-border-color: ffffff;" text="back" textFill="WHITE">
+            <Button fx:id="close" layoutX="52.0" layoutY="32.0" mnemonicParsing="false" onAction="#closeButtonOnAction" prefHeight="33.0" prefWidth="82.0" stylesheets="@cssfiles/button.css" text="back" textFill="#120f0f">
                <font>
-                  <Font name="Axiforma-Light" size="17.0" />
+                  <Font name="Axiforma-Regular" size="17.0" />
                </font>
             </Button>
-            <TextField fx:id="search" layoutX="146.0" layoutY="98.0" prefHeight="25.0" prefWidth="509.0" promptText="Search" />
-            <Button fx:id="searchButton" layoutX="674.0" layoutY="98.0" mnemonicParsing="false" onAction="#searchButtonOnAction" text="Search" />
+            <TextField fx:id="search" layoutX="126.0" layoutY="108.0" prefHeight="34.0" prefWidth="509.0" promptText="Search" style="-fx-background-radius: 0; -fx-border-color: #4f3140;">
+               <font>
+                  <Font name="Axiforma-Regular" size="15.0" />
+               </font></TextField>
+            <Button fx:id="searchButton" layoutX="648.0" layoutY="108.0" mnemonicParsing="false" onAction="#searchButtonOnAction" prefHeight="33.0" prefWidth="81.0" stylesheets="@cssfiles/button.css" text="Search">
+               <font>
+                  <Font size="5.0" />
+               </font></Button>
          </children>
       </AnchorPane>
    </top>

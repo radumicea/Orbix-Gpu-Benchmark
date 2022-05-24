@@ -2,7 +2,9 @@
     
     -fx-background-color:  #a58daa;
     -fx-background-radius: 0;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+    
+    -fx-font-family: Axiforma;
+    -fx-font-size: 17;
 }
 .button:hover {
     -fx-background-color: #26161e;
@@ -10,4 +12,5 @@
 }
 .button Text {
     -fx-fill: black;
+    
 }
