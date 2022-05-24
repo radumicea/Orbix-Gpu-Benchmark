@@ -5,7 +5,10 @@ import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
 import com.aparapi.exception.CompileFailedException;
 
-public class FractalsBenchmark implements IBenchmark {
+import javax.swing.*;
+import java.awt.*;
+
+public class FractalsBenchmark extends JFrame implements IBenchmark {
 
   // We want to know the nr. of
   // iterations computed in 2s

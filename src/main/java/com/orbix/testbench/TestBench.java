@@ -11,6 +11,8 @@ import com.orbix.logging.BenchResult;
 import java.time.Instant;
 import javafx.concurrent.Task;
 
+import javax.swing.*;
+
 @SuppressWarnings("unchecked")
 public final class TestBench extends Task<BenchResult> {
 
@@ -52,12 +54,27 @@ public final class TestBench extends Task<BenchResult> {
   protected BenchResult call() {
     try {
       double score = 0;
-
+      JFrame progressFrame = new JFrame("Standard Benchmark Progress");
+      JPanel progressPanel = new JPanel();
+      JProgressBar progressBar = new JProgressBar();
+      progressBar.setValue(0);
+      progressBar.setStringPainted(true);
+      progressPanel.add(progressBar);
+      progressFrame.add(progressPanel);
+      if (benchClasses.length == 4){
+        progressFrame.setSize(500, 500);
+        progressFrame.setVisible(true);
+      }
+      int value = 0;
       for (Class<? extends IBenchmark> benchClass : benchClasses) {
         IBenchmark bench = benchClass.getDeclaredConstructor().newInstance();
         bench.initialize(GPU);
         bench.run();
-
+        if (benchClasses.length == 4)
+        {
+          value += 25;
+          progressBar.setValue(value);
+        }
         score += getScore(bench.getResult(), benchClass);
       }
 
