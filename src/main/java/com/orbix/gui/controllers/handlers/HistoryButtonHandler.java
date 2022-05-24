@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -31,7 +32,8 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
       historyStage.initStyle(StageStyle.UNDECORATED);
       // registerStage.setTitle("Application");
       historyStage.setScene(new Scene(root, 800, 600));
-      historyStage.show();
+      historyStage.initModality(Modality.APPLICATION_MODAL);
+      historyStage.showAndWait();
     }
     catch (Exception e){
       AlertDisplayer.displayError(
