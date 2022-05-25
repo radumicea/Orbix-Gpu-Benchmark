@@ -52,14 +52,9 @@ public class Database {
 
 
 
-    public boolean equalsElement(Object o) {
-        //if (this == o) return true;
-        //if (o == null || getClass() != o.getClass()) return false;
-        //String toCompare= new Stri
-        //return Objects.equals(user, toCompare) || Objects.equals(gpu, toCompare) || Objects.eq
-        String toCompare= (String)o;
-        return (this.user.equals(toCompare) || this.gpu.equals(toCompare)
-                || this.bench.equals(toCompare) || String.valueOf(this.score).equals(toCompare));
+    public boolean searchElement(String s) {
+        return (this.user.contains(s) || this.gpu.contains(s)
+                || this.bench.contains(s) || String.valueOf(this.score).contains(s));
     }
 
     @Override

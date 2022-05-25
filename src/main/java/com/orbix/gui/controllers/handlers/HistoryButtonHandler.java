@@ -42,7 +42,6 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
               "Could not connect to the database! Check the console for more information and your internet connection."
       );
       e.printStackTrace();
-      e.getCause();
     }
   }
 

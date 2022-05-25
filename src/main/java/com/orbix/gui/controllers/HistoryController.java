@@ -76,7 +76,7 @@ public class HistoryController implements Initializable{
 
         for(Database datab: arr)
         {
-            if(datab.equalsElement(searchedElement)) search.add(datab);
+            if(datab.searchElement(searchedElement)) search.add(datab);
         }
 
         list = FXCollections.observableArrayList(search);
