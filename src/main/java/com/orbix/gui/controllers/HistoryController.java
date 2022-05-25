@@ -1,14 +1,12 @@
 package com.orbix.gui.controllers;
 
 import com.mongodb.MongoException;
-import com.orbix.database.Database;
 import com.orbix.database.DatabaseParser;
-
+import com.orbix.logging.BenchResult;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,83 +19,89 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+public class HistoryController implements Initializable {
 
+  @FXML
+  private Button close;
 
-public class HistoryController implements Initializable{
+  @FXML
+  private TableView<BenchResult> table;
 
-    @FXML
-    private Button close;
+  @FXML
+  private TableColumn<BenchResult, String> time;
 
-    @FXML
-    private TableView<Database> table;
-    @FXML
-    private TableColumn<Database,String> time;
-    @FXML
-    private TableColumn<Database,String> user;
-    @FXML
-    private TableColumn<Database,String> gpu;
-    @FXML
-    private TableColumn<Database,String> bench;
-    @FXML
-    private TableColumn<Database,Long> score;
+  @FXML
+  private TableColumn<BenchResult, String> user;
 
-    @FXML
-    private TextField search;
-    @FXML
-    private Button searchButton;
+  @FXML
+  private TableColumn<BenchResult, String> gpu;
 
-    private static String searchedElement;
-    private ArrayList<Database> arr;
-    private ObservableList<Database> list;
+  @FXML
+  private TableColumn<BenchResult, String> bench;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) throws  MongoException{
+  @FXML
+  private TableColumn<BenchResult, Long> score;
 
-        DatabaseParser db = new DatabaseParser();
+  @FXML
+  private TextField search;
 
-        arr = db.parseAscending();
-        db.close();
+  @FXML
+  private Button searchButton;
 
-        list = FXCollections.observableArrayList(arr);
+  private static String searchedElement;
+  private ArrayList<BenchResult> arr;
+  private ObservableList<BenchResult> list;
 
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle)
+    throws MongoException {
+    DatabaseParser db = new DatabaseParser();
 
-        time.setCellValueFactory(new PropertyValueFactory<Database,String>("time"));
-        user.setCellValueFactory(new PropertyValueFactory<Database,String>("user"));
-        gpu.setCellValueFactory(new PropertyValueFactory<Database,String>("gpu"));
-        bench.setCellValueFactory(new PropertyValueFactory<Database,String>("bench"));
-        score.setCellValueFactory(new PropertyValueFactory<Database,Long>("score"));
+    arr = db.parseDescending();
+    db.close();
 
-        table.setItems(list);
+    list = FXCollections.observableArrayList(arr);
+
+    time.setCellValueFactory(
+      new PropertyValueFactory<BenchResult, String>("dateTime")
+    );
+    user.setCellValueFactory(
+      new PropertyValueFactory<BenchResult, String>("userName")
+    );
+    gpu.setCellValueFactory(
+      new PropertyValueFactory<BenchResult, String>("GPUName")
+    );
+    bench.setCellValueFactory(
+      new PropertyValueFactory<BenchResult, String>("benchName")
+    );
+    score.setCellValueFactory(
+      new PropertyValueFactory<BenchResult, Long>("score")
+    );
+
+    table.setItems(list);
+  }
+
+  public void search() {
+    ArrayList<BenchResult> search = new ArrayList<BenchResult>();
+
+    for (BenchResult res : arr) {
+      if (res.searchElement(searchedElement)) search.add(res);
     }
 
-    public void search()
-    {
-        ArrayList<Database> search = new ArrayList<Database>();
+    list = FXCollections.observableArrayList(search);
+    table.setItems(list);
+  }
 
-        for(Database datab: arr)
-        {
-            if(datab.searchElement(searchedElement)) search.add(datab);
-        }
+  public void closeButtonOnAction(ActionEvent event) {
+    Stage stage = (Stage) close.getScene().getWindow();
+    stage.close();
+  }
 
-        list = FXCollections.observableArrayList(search);
-        table.setItems(list);
-    }
+  public void searchButtonOnAction(ActionEvent event) throws IOException {
+    //initialize2();
+    searchedElement = search.getText();
+    search();
+    //initialize2();
 
-    public void closeButtonOnAction(ActionEvent event){
-        Stage stage = (Stage)close.getScene().getWindow();
-        stage.close();
-    }
-
-    public void searchButtonOnAction(ActionEvent event) throws IOException
-    {
-        //initialize2();
-        searchedElement=search.getText();
-        search();
-        //initialize2();
-
-
-    }
-
-
-
+  }
 }

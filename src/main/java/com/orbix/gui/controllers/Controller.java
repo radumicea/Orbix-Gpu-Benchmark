@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.shape.Polygon;
 
 @SuppressWarnings("rawtypes")
 public class Controller {
@@ -31,6 +30,7 @@ public class Controller {
 
   @FXML
   private Button fractals_button;
+
   @FXML
   private ChoiceBox history_label;
 
@@ -56,12 +56,7 @@ public class Controller {
         FractalsBenchmark
       );
 
-    history_label
-      .getItems()
-      .addAll(
-              LocalHistory,
-              GlobalHistory
-      );
+    history_label.getItems().addAll(LocalHistory, GlobalHistory);
 
     run_button.setOnAction(
       new RunButtonHandler(logsFileName, gpu_label, method_label)
@@ -71,9 +66,6 @@ public class Controller {
       new HistoryButtonHandler(logsFileName, history_label)
     );
 
-    fractals_button.setOnAction(
-            new FractalsButtonHandler()
-    );
-
+    fractals_button.setOnAction(new FractalsButtonHandler());
   }
 }

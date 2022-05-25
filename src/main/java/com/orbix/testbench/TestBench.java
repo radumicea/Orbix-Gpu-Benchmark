@@ -10,7 +10,6 @@ import com.orbix.bench.TrigonometryBenchmark;
 import com.orbix.logging.BenchResult;
 import java.time.Instant;
 import javafx.concurrent.Task;
-
 import javax.swing.*;
 
 @SuppressWarnings("unchecked")
@@ -58,11 +57,13 @@ public final class TestBench extends Task<BenchResult> {
     try {
       double score = 0;
       progressBar.setValue(0);
-      progressBar.setString("The " + benchClasses[0].getDeclaredConstructor()+ " is running");
+      progressBar.setString(
+        "The " + benchClasses[0].getDeclaredConstructor() + " is running"
+      );
       progressBar.setStringPainted(true);
       progressPanel.add(progressBar);
       progressFrame.add(progressPanel);
-      if (benchClasses.length == 4){
+      if (benchClasses.length == 4) {
         progressFrame.setSize(200, 200);
         progressFrame.pack();
         progressFrame.setLocationRelativeTo(null);
@@ -72,11 +73,8 @@ public final class TestBench extends Task<BenchResult> {
       for (Class<? extends IBenchmark> benchClass : benchClasses) {
         IBenchmark bench = benchClass.getDeclaredConstructor().newInstance();
         bench.initialize(GPU);
-        if (benchClasses.length == 4)
-        {
-
-
-          switch(benchClass.getName()){
+        if (benchClasses.length == 4) {
+          switch (benchClass.getName()) {
             case "com.orbix.bench.DataTransferBenchmark":
               benchName = "DataTransferBenchmark";
               break;
@@ -92,7 +90,6 @@ public final class TestBench extends Task<BenchResult> {
               benchName = "FractalsBenchmark";
               value += 50;
               break;
-
           }
           progressBar.setString("The " + benchName + " is running");
           progressFrame.setVisible(true);

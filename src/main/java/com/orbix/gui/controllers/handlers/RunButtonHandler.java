@@ -16,7 +16,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.input.MouseEvent;
 
 @SuppressWarnings("rawtypes")
 public class RunButtonHandler implements EventHandler<ActionEvent> {
@@ -81,12 +80,9 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
       .findFirst()
       .get();
 
-    if (benchMethod == BenchmarkingMethods.StandardBenchmark)
-    {
+    if (benchMethod == BenchmarkingMethods.StandardBenchmark) {
       log = getDatabaseLogger();
-    }
-    else
-    {
+    } else {
       log = getCSVLogger();
     }
 
@@ -97,30 +93,26 @@ public class RunButtonHandler implements EventHandler<ActionEvent> {
     t.start();
   }
 
-  private ILogger getDatabaseLogger(){
+  private ILogger getDatabaseLogger() {
     ILogger log;
     try {
       log = new DatabaseLogger();
-    }
-    catch (MongoException mongoException)
-    {
+    } catch (MongoException mongoException) {
       AlertDisplayer.displayWarning(
-              "File Write Warning",
-              null,
-              "Cannot connect to the MongoDB server. Will write to the file logger instead."
+        "File Write Warning",
+        null,
+        "Cannot connect to the MongoDB server. Will write to the file logger instead."
       );
       try {
         log = new FileLogger(logsFileName);
-      }
-      catch (IOException e)
-      {
+      } catch (IOException e) {
         log = new ConsoleLogger();
         AlertDisplayer.displayWarning(
-                "File Open Warning",
-                null,
-                "Can not open the " +
-                        logsFileName +
-                        " file. Will write to the console instead."
+          "File Open Warning",
+          null,
+          "Can not open the " +
+          logsFileName +
+          " file. Will write to the console instead."
         );
         e.printStackTrace();
       }

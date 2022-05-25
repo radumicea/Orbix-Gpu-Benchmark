@@ -1,6 +1,5 @@
 package com.orbix.bench;
 
-import com.aparapi.Kernel;
 import com.aparapi.Range;
 import com.aparapi.device.OpenCLDevice;
 import com.aparapi.exception.CompileFailedException;

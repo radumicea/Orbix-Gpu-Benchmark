@@ -14,6 +14,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+@SuppressWarnings("rawtypes")
 public class HistoryButtonHandler implements EventHandler<ActionEvent> {
 
   private final String logsFileName;
@@ -24,22 +25,22 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
     this.historyType = historyType;
   }
 
-  public void initStage()
-  {
-    try{
-      Parent root = FXMLLoader.load(getClass().getResource("/com/orbix/table.fxml"));
+  public void initStage() {
+    try {
+      Parent root = FXMLLoader.load(
+        getClass().getResource("/com/orbix/table.fxml")
+      );
       Stage historyStage = new Stage();
       historyStage.initStyle(StageStyle.UNDECORATED);
       // registerStage.setTitle("Application");
       historyStage.setScene(new Scene(root, 800, 600));
       historyStage.initModality(Modality.APPLICATION_MODAL);
       historyStage.showAndWait();
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       AlertDisplayer.displayError(
-              "Database Connection Error",
-              null,
-              "Could not connect to the database! Check the console for more information and your internet connection."
+        "Database Connection Error",
+        null,
+        "Could not connect to the database! Check the console for more information and your internet connection."
       );
       e.printStackTrace();
     }
@@ -58,35 +59,31 @@ public class HistoryButtonHandler implements EventHandler<ActionEvent> {
       );
       return;
     }
-    HistoryTypes typeName = (HistoryTypes) historyType .getSelectionModel().getSelectedItem();
+    HistoryTypes typeName = (HistoryTypes) historyType
+      .getSelectionModel()
+      .getSelectedItem();
 
-    if (typeName == null)
-    {
+    if (typeName == null) {
       AlertDisplayer.displayWarning(
-              "History Type Not Selected",
-              null,
-              "Please select a history type first."
+        "History Type Not Selected",
+        null,
+        "Please select a history type first."
       );
       return;
     }
 
     if (typeName == HistoryTypes.GlobalHistory) {
       initStage();
-    }
-    else
-    {
-      try
-      {
+    } else {
+      try {
         Desktop.getDesktop().open(new File(logsFileName + ".csv"));
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         AlertDisplayer.displayError(
-                "File Open Error",
-                null,
-                "Can not open the " +
-                        logsFileName +
-                        " file. Check the console for more information."
+          "File Open Error",
+          null,
+          "Can not open the " +
+          logsFileName +
+          " file. Check the console for more information."
         );
         e.printStackTrace();
       }
