@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #29d6b8; -fx-border-color: #E24460;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orbix.gui.controllers.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #29d6b8; -fx-border-color: #E24460;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orbix.gui.controllers.Controller">
     <left>
         <AnchorPane prefHeight="598.0" prefWidth="809.0" BorderPane.alignment="CENTER">
             <children>
@@ -57,7 +57,7 @@
                   <Font name="Axiforma-Black" size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip contentDisplay="RIGHT" text="Benchmark use: aaaaaaaaaaaaaaaaaaaaaaaaaaaaa&#10;sssssssssssssssssssssssssssssssssssssssss" />
+                  <Tooltip contentDisplay="RIGHT" text="The &quot;Visualize Fractals&quot; button will &#10;let you explore more in detail on &#10;your full screen Mandelbrot's fractal. &#10;If you press the left mouse button you &#10;will be able to zoom in the fractal, and &#10;by pressing the right mouse button you &#10;will zoom out the fractal. In order to minimize&#10; the window, press the Alt + Esc keys combination,&#10;and by pressing the Alt + F4 keys combination,&#10; you will close the fractals window, but also the&#10; entire program." />
                </tooltip></Button>
             <Button fx:id="run_button" layoutX="500.0" layoutY="354.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="169.0" stylesheets="@cssfiles/button.css" text="Start Benchmark" textAlignment="CENTER" textFill="#120f0f">
                <font>

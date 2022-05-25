@@ -11,6 +11,8 @@ import com.orbix.logging.BenchResult;
 import java.time.Instant;
 import javafx.concurrent.Task;
 
+import javax.swing.*;
+
 @SuppressWarnings("unchecked")
 public final class TestBench extends Task<BenchResult> {
 
@@ -50,16 +52,59 @@ public final class TestBench extends Task<BenchResult> {
 
   @Override
   protected BenchResult call() {
+    JFrame progressFrame = new JFrame("Standard Benchmark Progress");
+    JPanel progressPanel = new JPanel();
+    JProgressBar progressBar = new JProgressBar();
     try {
       double score = 0;
-
+      progressBar.setValue(0);
+      progressBar.setString("The " + benchClasses[0].getDeclaredConstructor()+ " is running");
+      progressBar.setStringPainted(true);
+      progressPanel.add(progressBar);
+      progressFrame.add(progressPanel);
+      if (benchClasses.length == 4){
+        progressFrame.setSize(200, 200);
+        progressFrame.pack();
+        progressFrame.setLocationRelativeTo(null);
+      }
+      int value = 0;
+      String benchName = "";
       for (Class<? extends IBenchmark> benchClass : benchClasses) {
         IBenchmark bench = benchClass.getDeclaredConstructor().newInstance();
         bench.initialize(GPU);
-        bench.run();
+        if (benchClasses.length == 4)
+        {
 
+
+          switch(benchClass.getName()){
+            case "com.orbix.bench.DataTransferBenchmark":
+              benchName = "DataTransferBenchmark";
+              break;
+            case "com.orbix.bench.TrigonometryBenchmark":
+              benchName = "TrigonometryBenchmark";
+              value += 5;
+              break;
+            case "com.orbix.bench.MatrixMultiplicationBenchmark":
+              benchName = "MatrixMultiplicationBenchmark";
+              value += 30;
+              break;
+            case "com.orbix.bench.FractalsBenchmark":
+              benchName = "FractalsBenchmark";
+              value += 50;
+              break;
+
+          }
+          progressBar.setString("The " + benchName + " is running");
+          progressFrame.setVisible(true);
+          progressBar.setValue(value);
+        }
+        bench.run();
         score += getScore(bench.getResult(), benchClass);
       }
+      progressBar.setString("All the benchmarks were run");
+      value += 15;
+      progressBar.setValue(value);
+      progressFrame.setVisible(false);
 
       return new BenchResult(
         Instant.now().toString(),
@@ -69,6 +114,7 @@ public final class TestBench extends Task<BenchResult> {
         Math.round(score)
       );
     } catch (Throwable t) {
+      progressFrame.setVisible(false);
       t.printStackTrace();
       System.exit(-1);
       return null;
