@@ -76,4 +76,4 @@ The results provided by Orbix are consistent and comparable with other GPU bench
 - **Biased Results**: Normalization is based on an RX Vega 8, which may introduce bias in the results.
 ## Acknowledgements
 
-- [*Aparapi* Library](https://github.com/Syncleus/*Aparapi*-examples) for providing the framework to run Java code on GPUs.
+- [*Aparapi*](https://github.com/Syncleus/aparapi) for providing the framework to run Java code on GPUs.
